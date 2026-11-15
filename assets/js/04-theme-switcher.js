@@ -1,0 +1,2 @@
+/* Athletic Physique — extracted from original index.html script block 5 (line 3336) */
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-th]');if(!b)return;ls.set('ap_theme',b.dataset.th);document.documentElement.dataset.theme=b.dataset.th;document.querySelectorAll('[data-th]').forEach(x=>x.setAttribute('aria-pressed',x===b))});

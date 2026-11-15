@@ -1,0 +1,2 @@
+/* Athletic Physique — extracted from original index.html script block 15 (line 3583) */
+document.addEventListener('click',e=>{const c=e.target.closest&&e.target.closest('[data-tip]');if(!c)return;const sv=c.closest('svg');let t=sv.nextElementSibling;if(!t||!t.classList.contains('tp')){t=document.createElement('div');t.className='prev tp';t.style.cssText='text-align:center;color:var(--warm);font-weight:600';sv.after(t)}t.textContent=c.dataset.tip;sv.querySelectorAll('circle:not(.hit)').forEach(x=>x.setAttribute('r',x===c.nextElementSibling?6:3.5))});

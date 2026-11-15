@@ -1,0 +1,1 @@
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-dldis]')){ls.set('ap_dl',mondayIso());render()}const w=e.target.closest&&e.target.closest('[data-wrdis]');if(w){ls.set('ap_wr',w.dataset.wrdis);render()}});

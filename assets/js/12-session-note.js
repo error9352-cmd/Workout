@@ -1,0 +1,2 @@
+/* Athletic Physique — extracted from original index.html script block 13 (line 3581) */
+document.addEventListener('input',e=>{const t=e.target;if(t.id!=='shn')return;const a=window.apTraining?window.apTraining.all():ls.get('ap_sessions',[]);if(a.length){const s=a[a.length-1],note=t.value.trim().slice(0,200);if(window.apTraining)window.apTraining.update(s.id,{note,notes:note});else{s.note=note;ls.set('ap_sessions',a)}}});
