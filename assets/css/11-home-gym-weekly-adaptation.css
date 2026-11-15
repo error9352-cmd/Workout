@@ -1,0 +1,16 @@
+/* Home Gym Weekly Adaptation */
+.hg-weekly-adaptation{margin-top:14px;overflow:hidden}
+.hg-weekly-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.hg-weekly-head h2{margin:4px 0 6px;font-size:22px}
+.hg-weekly-badge{display:inline-flex;align-items:center;justify-content:center;padding:7px 10px;border:1px solid var(--line,#ddd);border-radius:999px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.hg-weekly-badge.up{border-color:rgba(34,197,94,.35)}
+.hg-weekly-badge.hard{border-color:rgba(239,68,68,.35)}
+.hg-weekly-badge.rotate{border-color:rgba(245,158,11,.4)}
+.hg-weekly-badge.deload{border-color:rgba(99,102,241,.4)}
+.hg-weekly-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}
+.hg-weekly-stats>div{padding:12px;border:1px solid var(--line,#ddd);border-radius:12px;background:var(--surface-2,#fafafa)}
+.hg-weekly-stats span{display:block;font-size:10px;font-weight:800;letter-spacing:.08em;opacity:.62}
+.hg-weekly-stats b{display:block;margin-top:5px;font-size:17px}
+.hg-weekly-next{margin-top:12px;padding:13px 14px;border-radius:12px;background:var(--surface-2,#fafafa);border:1px solid var(--line,#ddd)}
+.hg-weekly-next p{margin:5px 0 0}
+@media(max-width:640px){.hg-weekly-head{flex-direction:column}.hg-weekly-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}

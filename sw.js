@@ -1,7 +1,8 @@
-/* Athletic Physique - service worker (mode offline)
-   Halaman: network-first (update otomatis), jatuh ke cache saat offline.
-   Aset lain (font, ikon, manifest): cache dulu, perbarui di latar belakang. */
-const V = 'ap-v51';
+/* Athletic Physique - service worker
+   Navigasi dan aset aplikasi lokal: network-first agar update terbaru segera dipakai.
+   Resource eksternal: cache-first agar tetap nyaman saat offline.
+   Cache versi dinaikkan setiap perubahan strategi/asset PWA yang material. */
+const V = 'ap-v57';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -28,24 +29,39 @@ const keep = (req, res) => {
   return res;
 };
 
+const fallback = req => caches.match(req, { ignoreSearch: true })
+  .then(r => r || caches.match('./') || caches.match('index.html'));
+
+const networkFirst = (req, timeout = 3500) => new Promise(resolve => {
+  let done = false;
+  const finish = r => { if (!done) { done = true; resolve(r); } };
+  const timer = setTimeout(() => fallback(req).then(r => finish(r || Response.error())), timeout);
+  fetch(req).then(res => {
+    if (!done) { clearTimeout(timer); finish(keep(req, res)); }
+    else keep(req, res);
+  }).catch(() => {
+    clearTimeout(timer);
+    fallback(req).then(r => finish(r || Response.error()));
+  });
+});
+
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET' || !/^https?:/.test(req.url) || req.url.includes('.supabase.co')) return;
 
   if (req.mode === 'navigate') {
-    e.respondWith(
-      new Promise(resolve => {
-        let done = false;
-        const fallback = () => caches.match(req, { ignoreSearch: true })
-          .then(r => r || caches.match('./') || caches.match('index.html'));
-        const timer = setTimeout(() => fallback().then(r => { if (r && !done) { done = true; resolve(r); } }), 3500);
-        fetch(req).then(res => { if (!done) { done = true; clearTimeout(timer); resolve(keep(req, res)); } else keep(req, res); })
-          .catch(() => { clearTimeout(timer); fallback().then(r => { if (!done) { done = true; resolve(r || Response.error()); } }); });
-      })
-    );
+    e.respondWith(networkFirst(req));
     return;
   }
 
+  const sameOrigin = new URL(req.url).origin === self.location.origin;
+  if (sameOrigin) {
+    // CSS/JS/JSON/images lokal harus mengambil versi network terbaru bila online.
+    e.respondWith(networkFirst(req));
+    return;
+  }
+
+  // Resource eksternal tetap cache-first untuk pengalaman offline.
   e.respondWith(
     caches.match(req).then(hit => {
       const net = fetch(req).then(res => keep(req, res)).catch(() => hit);

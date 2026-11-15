@@ -1,0 +1,69 @@
+/* ATHLETIC PHYSIQUE — Workout Flow UX v7 */
+
+/* Start actions: visually identical, but clearly interactive and resistant to accidental double taps. */
+.workout-start-card .btn,
+.home-workout-program .btn,
+.dashboard-hero .btn[data-start],
+.dashboard-active-card .btn[data-start]{
+  position:relative;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.workout-start-card .btn:not(:disabled):hover,
+.home-workout-program .btn:not(:disabled):hover,
+.dashboard-hero .btn[data-start]:not(:disabled):hover,
+.dashboard-active-card .btn[data-start]:not(:disabled):hover{
+  transform:translateY(-1px);
+}
+
+.workout-start-card .btn:disabled,
+.home-workout-program .btn:disabled,
+.dashboard-hero .btn[data-start]:disabled,
+.dashboard-active-card .btn[data-start]:disabled{
+  cursor:wait;
+  opacity:.78;
+  transform:none;
+}
+
+/* Active workout: keep the primary session controls visually dominant. */
+body.wk .wk-session-head{
+  position:relative;
+}
+body.wk .wk-session-progress{
+  min-width:72px;
+}
+body.wk .snr .snb{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+body.wk .snr .snb [data-finish]{
+  border-color:rgba(255,255,255,.12);
+  font-weight:800;
+}
+
+/* Completion action gets a stable visual target on narrow screens. */
+@media(max-width:699px){
+  body.wk .snr .snb [data-finish]{
+    min-width:96px;
+  }
+  body.wk .slide .f:last-child .btn[data-finish]{
+    min-height:50px!important;
+  }
+}
+
+/* Do not let a temporary launch lock make the UI look broken. */
+body:not(.wk) [aria-busy="true"]{
+  pointer-events:none;
+}
+
+/* Clear state when a workout is active. */
+body.ap-workout-active #nav [data-go="workout"]{
+  font-weight:800;
+}
+
+@media(max-width:420px){
+  body.wk .snr .snb{gap:6px}
+  body.wk .snr .snb .chip{padding-inline:10px}
+}

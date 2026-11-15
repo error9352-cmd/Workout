@@ -1,0 +1,92 @@
+/* ATHLETIC PHYSIQUE — Stage 18 Workout AI Inline Card */
+.ap-exercise-ai{
+  display:grid;
+  gap:8px;
+  margin:0 0 14px;
+  padding:0;
+  min-width:0;
+}
+.ap-exercise-ai .ap-stage13-unified-note{
+  margin:0!important;
+  border-radius:13px;
+  box-shadow:none;
+  padding:11px 12px;
+}
+.ap-exercise-ai .ap-stage13-note-head{gap:8px}
+.ap-exercise-ai .ap-stage13-kicker{font-size:9px}
+.ap-exercise-ai .ap-stage13-badge{min-height:25px;padding:4px 8px;font-size:9px}
+.ap-exercise-ai .ap-stage13-unified-note strong{font-size:13px}
+.ap-exercise-ai .ap-stage13-unified-note p{font-size:12px;margin-top:2px}
+.ap-exercise-ai .ap-stage13-unified-note small{font-size:10px;line-height:1.4}
+.ap-exercise-ai .ap-stage14-trace{
+  margin:0!important;
+  border-radius:12px;
+  background:rgba(255,255,255,.012);
+  box-shadow:none;
+}
+.ap-exercise-ai .ap-stage14-trace summary{
+  min-height:38px;
+  padding:9px 11px;
+  font-size:11px;
+}
+.ap-exercise-ai .ap-stage14-trace-body{padding:0 11px 11px;gap:9px}
+.ap-exercise-ai .ap-stage14-reason{padding:9px 10px}
+.ap-exercise-ai .ap-stage14-source-row{padding:8px 9px}
+.ap-exercise-ai .ap-stage14-outcome>div{padding:8px 9px}
+
+/* Home Workout planner: keep the page centered and prevent desktop/tablet offset. */
+.home-workout-view{
+  width:100%;
+  max-width:1180px;
+  margin:0 auto;
+  min-width:0;
+  box-sizing:border-box;
+}
+.home-workout-view > *{min-width:0;box-sizing:border-box}
+.home-workout-view .workout-mode-switch{width:min(420px,100%);margin-left:0;margin-right:0}
+.home-workout-head{align-items:flex-start}
+.home-workout-head>div{min-width:0}
+.home-workout-head h1{margin-bottom:6px}
+.home-workout-head .sub{max-width:720px}
+.home-workout-grid{align-items:stretch}
+.home-workout-program{height:100%;display:flex;flex-direction:column}
+.home-workout-program .home-workout-exercises{flex:1}
+.home-workout-program .btn{margin-top:auto}
+.home-gym-summary{width:100%;max-width:none}
+.home-gym-personal-note{width:100%;max-width:none}
+.home-workout-section{width:100%;max-width:none}
+.home-workout-equipment{align-items:stretch}
+.home-workout-equipment .card{height:100%;box-sizing:border-box}
+
+@media(min-width:1024px){
+  .home-workout-view{padding:0 2px}
+  .home-workout-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .home-workout-head{margin-bottom:18px}
+}
+
+/* Tablet: two balanced program columns when there is enough room, then stack cleanly. */
+@media(min-width:700px) and (max-width:1023px){
+  .home-workout-view{padding:0 1px}
+  .home-workout-head{gap:14px;margin-bottom:16px}
+  .home-workout-head h1{font-size:34px}
+  .home-workout-head .sub{max-width:620px}
+  .home-workout-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .home-workout-program{padding:15px}
+  .home-workout-program h2{font-size:18px}
+  .home-workout-meta{gap:6px}
+  .home-workout-meta span{padding:4px 8px}
+  .home-workout-exercises div{grid-template-columns:24px minmax(0,1fr) auto;gap:7px}
+  .home-workout-exercises small{font-size:10px}
+  .home-gym-summary>div{padding:13px 14px}
+  .home-gym-personal-note{padding:14px 15px}
+}
+
+@media(max-width:699px){
+  .home-workout-view{width:100%;padding:0}
+  .home-workout-grid{grid-template-columns:1fr}
+}
+
+@media(max-width:560px){
+  .ap-exercise-ai{margin-bottom:11px}
+  .home-workout-head{align-items:stretch}
+}

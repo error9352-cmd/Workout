@@ -1,0 +1,33 @@
+/* ATHLETIC PHYSIQUE — Gym Session Evaluation presentation */
+.gym-session-eval{margin-top:14px;padding:14px;border:1px solid rgba(120,169,255,.22);border-radius:14px;background:rgba(120,169,255,.045);min-width:0;overflow:hidden}
+.gse-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start;min-width:0}
+.gse-kicker{display:block;font-size:9px;line-height:1.2;letter-spacing:.09em;font-weight:800;color:var(--a1,#63a5ff);margin-bottom:5px}
+.gse-head strong{display:block;font-size:13px;line-height:1.35;overflow-wrap:anywhere}
+.gse-head p{margin:5px 0 0;font-size:11px;line-height:1.5;color:var(--muted,#94a3b8);overflow-wrap:anywhere}
+.gse-badge{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:6px 9px;border:1px solid rgba(255,255,255,.1);border-radius:999px;font-size:9px;line-height:1.15;font-weight:800;text-transform:uppercase;letter-spacing:.06em;white-space:normal;text-align:center;max-width:140px}
+.gse-badge.successful{color:#a9e6c0;background:rgba(45,180,100,.12)}
+.gse-badge.too_easy{color:#9fd8ff;background:rgba(35,145,255,.12)}
+.gse-badge.too_hard{color:#ffd0a6;background:rgba(230,135,45,.12)}
+.gse-badge.stagnant{color:#e4c7ff;background:rgba(145,80,210,.12)}
+.gse-badge.incomplete{color:#ffb5b5;background:rgba(220,70,70,.12)}
+.gse-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.gse-row{min-width:0;padding:10px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.025)}
+.gse-row b,.gse-row span,.gse-row small{display:block;overflow-wrap:anywhere}
+.gse-row b{font-size:11px;line-height:1.35}
+.gse-row span{margin-top:3px;font-size:10px;line-height:1.35;color:var(--a1,#63a5ff)}
+.gse-row small{margin-top:4px;font-size:9px;line-height:1.45;color:var(--muted,#94a3b8)}
+.gse-next{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;margin-top:11px;padding-top:11px;border-top:1px solid var(--line);font-size:10px;line-height:1.45}
+.gse-next b{color:var(--txt,#fff);white-space:nowrap}
+.gse-next span{color:var(--muted,#94a3b8);overflow-wrap:anywhere}
+@media(max-width:560px){.gse-head{grid-template-columns:1fr}.gse-badge{justify-self:start;max-width:none}.gse-list{grid-template-columns:1fr}.gse-next{grid-template-columns:1fr;gap:3px}}
+
+/* v2: session evaluations live inside each History item, never above the page header. */
+.history-session-evaluation{width:100%;box-sizing:border-box;}
+.history-session-evaluation.hg-session-eval{margin:14px 0 0;}
+.hg-session-eval .hg-eval-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px;}
+.hg-session-eval .hg-eval-row{min-width:0;padding:10px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.025);}
+.hg-session-eval .hg-eval-row b,.hg-session-eval .hg-eval-row span,.hg-session-eval .hg-eval-row small{display:block;overflow-wrap:anywhere;}
+.hg-session-eval .hg-eval-row b{font-size:11px;line-height:1.35;}
+.hg-session-eval .hg-eval-row span{margin-top:3px;font-size:10px;line-height:1.35;color:var(--a1,#63a5ff);}
+.hg-session-eval .hg-eval-row small{margin-top:4px;font-size:9px;line-height:1.45;color:var(--muted,#94a3b8);}
+@media(max-width:560px){.hg-session-eval .hg-eval-grid{grid-template-columns:1fr;}}

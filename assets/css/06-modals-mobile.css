@@ -1,0 +1,365 @@
+/* Athletic Physique — Modal & mobile refinements */
+
+/* ===== Original style block 49 (line 4827) id="history-card-v62" ===== */
+
+.history-card-sheet{max-width:760px!important;width:min(94vw,760px)!important}
+.history-card-sheet img{width:100%!important;max-height:72dvh!important;object-fit:contain!important;border-radius:16px!important;margin-top:12px!important;border:1px solid rgba(90,155,255,.28)!important;box-shadow:0 20px 60px rgba(0,0,0,.35)!important}
+@media(max-width:699px){.history-card-sheet{width:min(96vw,620px)!important;padding:14px!important}.history-card-sheet img{max-height:66dvh!important}}
+
+/* ===== Original style block 50 (line 4833) id="mobile-scroll-refinement-v63" ===== */
+
+/* v63 — Mobile: remove artificial end-of-page dead space while preserving bottom-nav clearance */
+@media(max-width:699px){
+  html{
+    overscroll-behavior-y:auto!important;
+  }
+  body:not(.wk){
+    min-height:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior-y:auto!important;
+  }
+  body:not(.wk) main{
+    min-height:auto!important;
+    height:auto!important;
+    padding-bottom:96px!important;
+  }
+  body:not(.wk) main#app{
+    padding-bottom:96px!important;
+  }
+}
+@media(max-width:380px){
+  body:not(.wk) main,
+  body:not(.wk) main#app{
+    padding-bottom:92px!important;
+  }
+}
+
+/* ===== Original style block 51 (line 4861) id="mobile-scroll-smooth-v64" ===== */
+
+@media (max-width:699px){
+  html{
+    scroll-behavior:smooth!important;
+    overscroll-behavior-y:auto!important;
+  }
+  body{
+    scroll-behavior:smooth!important;
+    overscroll-behavior-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  #app{
+    scroll-behavior:smooth!important;
+    overscroll-behavior-y:auto!important;
+  }
+  body:not(.wk) main#app{
+    padding-bottom:calc(92px + env(safe-area-inset-bottom))!important;
+  }
+  body:not(.wk) main#app::after{
+    content:"";
+    display:block;
+    height:24px;
+  }
+  body:not(.wk) .dashboard-view{
+    scroll-margin-bottom:24px;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  html,body,#app{scroll-behavior:auto!important;}
+}
+
+/* ===== Original style block 52 (line 4893) id="recommendation-modal-v65" ===== */
+
+/* v65: full-screen mobile recommendation sheet, locked background, calmer themed headings. */
+@media (max-width:699px){
+  body.modal-lock{
+    overflow:hidden !important;
+    overscroll-behavior:none !important;
+    width:100% !important;
+    position:fixed !important;
+    left:0 !important;
+    top:var(--modal-lock-y,0px) !important;
+  }
+  .schedule-recommendation-modal{
+    position:fixed !important;
+    inset:0 !important;
+    width:100vw !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px) !important;
+    display:flex !important;
+    align-items:stretch !important;
+    justify-content:stretch !important;
+    overflow:hidden !important;
+    overscroll-behavior:none !important;
+    background:rgba(3,7,16,.82) !important;
+    backdrop-filter:blur(10px) !important;
+    -webkit-backdrop-filter:blur(10px) !important;
+    z-index:10000 !important;
+  }
+  .schedule-recommendation-modal .sheet{
+    width:100% !important;
+    max-width:none !important;
+    height:100% !important;
+    max-height:none !important;
+    min-height:100% !important;
+    margin:0 !important;
+    border-radius:0 !important;
+    border-left:0 !important;
+    border-right:0 !important;
+    border-bottom:0 !important;
+    padding:calc(18px + env(safe-area-inset-top,0px)) 18px calc(22px + env(safe-area-inset-bottom,0px)) !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain !important;
+    -webkit-overflow-scrolling:touch !important;
+    touch-action:pan-y !important;
+    box-shadow:none !important;
+  }
+  .schedule-recommendation-modal .sheet h2{
+    color:var(--text) !important;
+  }
+  .schedule-recommendation-modal .pkh{
+    color:var(--text) !important;
+    margin-top:18px !important;
+    margin-bottom:8px !important;
+  }
+  .schedule-recommendation-modal .chips{
+    gap:8px !important;
+    flex-wrap:wrap !important;
+    overflow:visible !important;
+  }
+  .schedule-recommendation-modal .chip{
+    min-height:42px !important;
+  }
+  .schedule-recommendation-modal #ra{
+    position:sticky !important;
+    bottom:0 !important;
+    z-index:2 !important;
+    width:100% !important;
+    margin-top:18px !important;
+    box-shadow:0 -12px 24px rgba(8,13,25,.72) !important;
+  }
+  .schedule-recommendation-modal #rx,
+  .schedule-recommendation-modal #rr{
+    width:100% !important;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  .schedule-recommendation-modal{scroll-behavior:auto !important}
+}
+
+/* ===== Original style block 53 (line 4998) id="all-modals-mobile-v66" ===== */
+
+/* v66: unify mobile sheets/modals. Full-screen, isolated scrolling, no sticky title bar. */
+@media (max-width:699px){
+  html.modal-open,
+  body.modal-open{
+    overflow:hidden !important;
+    overscroll-behavior:none !important;
+    width:100% !important;
+  }
+  body.modal-open{
+    position:fixed !important;
+    left:0 !important;
+    top:var(--modal-lock-y,0px) !important;
+    right:0 !important;
+  }
+  .sheetbg{
+    position:fixed !important;
+    inset:0 !important;
+    width:100vw !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    padding:0 !important;
+    margin:0 !important;
+    display:flex !important;
+    align-items:stretch !important;
+    justify-content:stretch !important;
+    overflow:hidden !important;
+    overscroll-behavior:none !important;
+    background:rgba(3,7,16,.82) !important;
+    backdrop-filter:blur(10px) !important;
+    -webkit-backdrop-filter:blur(10px) !important;
+    z-index:10000 !important;
+  }
+  .sheetbg .sheet,
+  .sheetbg .sheet.xs{
+    width:100% !important;
+    max-width:none !important;
+    height:100% !important;
+    max-height:none !important;
+    min-height:100% !important;
+    margin:0 !important;
+    border-radius:0 !important;
+    border:0 !important;
+    box-shadow:none !important;
+    padding:calc(18px + env(safe-area-inset-top,0px)) 18px calc(22px + env(safe-area-inset-bottom,0px)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    overscroll-behavior:contain !important;
+    -webkit-overflow-scrolling:touch !important;
+    touch-action:pan-y !important;
+    scroll-behavior:smooth !important;
+  }
+  /* Titles are part of the content flow, not sticky bars. */
+  .sheet .sh-h,
+  .sheet .sh-h:is(h2){
+    position:static !important;
+    top:auto !important;
+    z-index:auto !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:12px !important;
+    margin:0 0 14px !important;
+    padding:0 !important;
+    background:transparent !important;
+    border:0 !important;
+    color:var(--text) !important;
+  }
+  .sheet h2:not(.sh-h){
+    position:static !important;
+    margin:0 0 14px !important;
+    padding:0 !important;
+    background:transparent !important;
+    border:0 !important;
+    color:var(--text) !important;
+  }
+  .sheet .sh-x{
+    flex:none !important;
+    width:44px !important;
+    height:44px !important;
+    margin:0 !important;
+    border-radius:50% !important;
+    background:rgba(255,255,255,.07) !important;
+    color:var(--text) !important;
+  }
+  /* Keep action buttons readable while avoiding a second floating header layer. */
+  .sheet .sdock{
+    position:sticky !important;
+    bottom:0 !important;
+    z-index:2 !important;
+    margin:18px -18px 0 !important;
+    padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px)) !important;
+    background:linear-gradient(180deg,rgba(8,13,25,0),rgba(8,13,25,.96) 32%) !important;
+  }
+  .sheet .sdock .btn{min-height:54px !important}
+  .sheet .grab{display:none !important}
+}
+@media (max-width:380px){
+  .sheetbg .sheet,
+  .sheetbg .sheet.xs{
+    padding-left:14px !important;
+    padding-right:14px !important;
+  }
+  .sheet .sh-h,
+  .sheet h2:not(.sh-h){font-size:18px !important}
+  .sheet .sh-x{width:42px !important;height:42px !important}
+  .sheet .sdock{margin-left:-14px !important;margin-right:-14px !important;padding-left:14px !important;padding-right:14px !important}
+}
+
+/* ===== Original style block 54 (line 5135) id="bottom-nav-dot-v71" ===== */
+
+@media (max-width:699px){
+  nav .tab[aria-current=page]::after{
+    display:none!important;
+  }
+}
+
+/* ===== Original style block 55 (line 5142) id="workout-desktop-time-layout-v72" ===== */
+
+/* v72: desktop/laptop time-mode row only. Mobile remains untouched. */
+@media (min-width:700px){
+  body.wk .wk-set-head.time, body.wk .set.mode-time{grid-template-columns:34px minmax(0,1fr) 140px 88px!important;gap:8px!important;align-items:center!important;}
+  body.wk .set.mode-time .time-timer{width:100%!important;min-width:0!important;height:52px!important;min-height:52px!important;}
+  body.wk .set.mode-time .timer-adjust{width:100%!important;min-width:0!important;margin:0!important;display:flex!important;align-items:center!important;justify-content:center!important;}
+  body.wk .set.mode-time .timer-adjust .seg{width:100%!important;max-width:none!important;height:52px!important;min-height:52px!important;margin:0!important;padding:0 4px!important;gap:3px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;box-sizing:border-box!important;}
+  body.wk .set.mode-time .timer-adjust .seg span{flex:1 1 auto!important;min-width:0!important;text-align:center!important;}
+  body.wk .set.mode-time .timer-adjust .seg button{flex:0 0 34px!important;width:34px!important;height:40px!important;padding:0!important;}
+  body.wk .set.mode-time .log{width:100%!important;min-width:0!important;height:52px!important;min-height:52px!important;}
+}
+
+/* ===== Original style block 56 (line 5156) id="all-modals-mobile-polish-v74" ===== */
+
+/* v74: premium surface treatment for every mobile .sheet/.sheet.xs. */
+@media (max-width:699px){
+  .sheetbg .sheet,
+  .sheetbg .sheet.xs{
+    position:relative !important;
+    isolation:isolate !important;
+    background:
+      radial-gradient(circle at 92% 0%, rgba(35,145,255,.10), transparent 30%),
+      radial-gradient(circle at 8% 100%, rgba(20,220,255,.055), transparent 28%),
+      linear-gradient(180deg, rgba(255,255,255,.055) 0%, rgba(255,255,255,.018) 18%, rgba(7,14,27,.98) 100%) !important;
+    border:0 !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.08),
+      inset 0 -1px 0 rgba(42,155,255,.08),
+      inset 1px 0 0 rgba(255,255,255,.025),
+      inset -1px 0 0 rgba(255,255,255,.025) !important;
+  }
+  .sheetbg .sheet::before{
+    content:"" !important;
+    position:absolute !important;
+    top:0 !important; left:0 !important; right:0 !important;
+    height:3px !important;
+    background:linear-gradient(90deg, transparent 0%, rgba(42,155,255,.9) 22%, rgba(24,220,255,1) 50%, rgba(42,155,255,.9) 78%, transparent 100%) !important;
+    opacity:.9 !important;
+    pointer-events:none !important;
+    z-index:0 !important;
+  }
+  .sheetbg .sheet > *{position:relative !important; z-index:1 !important;}
+  .sheet .sh-h, .sheet h2:not(.sh-h){text-shadow:0 1px 12px rgba(0,0,0,.28) !important;}
+  .sheet .sh-x{
+    width:44px !important; height:44px !important;
+    border:1px solid rgba(255,255,255,.09) !important;
+    background:rgba(255,255,255,.055) !important;
+    box-shadow:0 6px 20px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05) !important;
+  }
+  .sheet .sh-x:active{transform:scale(.94) !important; background:rgba(255,255,255,.09) !important;}
+  .sheet input, .sheet select, .sheet textarea{
+    border-color:rgba(255,255,255,.09) !important;
+    background:rgba(8,16,31,.62) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.025) !important;
+  }
+  .sheet .chip{
+    border-color:rgba(255,255,255,.09) !important;
+    background:rgba(20,34,57,.72) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.025) !important;
+  }
+  .sheet .chip[aria-current="true"]{box-shadow:0 8px 24px rgba(35,145,255,.16), inset 0 1px 0 rgba(255,255,255,.08) !important;}
+  .sheet .btn{box-shadow:0 8px 24px rgba(20,130,255,.13), inset 0 1px 0 rgba(255,255,255,.08) !important;}
+  .sheet .btn.ghost{box-shadow:inset 0 1px 0 rgba(255,255,255,.025) !important;}
+  .sheet .sdock{background:linear-gradient(180deg, rgba(7,14,27,0) 0%, rgba(7,14,27,.72) 24%, rgba(7,14,27,.97) 55%) !important;}
+}
+
+/* ===== Original style block 57 (line 5210) id="mobile-modal-selected-contrast-v77" ===== */
+
+/* v77: mobile selected states made clearly distinct; desktop untouched. */
+@media (max-width:699px){
+  .sheet .chip[aria-current="true"],
+  .sheet .chip[aria-pressed="true"],
+  .sheet .chip[aria-selected="true"],
+  .sheet .choice[aria-current="true"],
+  .sheet .choice[aria-pressed="true"],
+  .sheet .choice[aria-selected="true"],
+  .sheet .seg .active,
+  .sheet .seg .selected,
+  .sheet .seg [aria-selected="true"],
+  .sheet .seg [aria-pressed="true"]{
+    background:linear-gradient(135deg,rgba(20,145,255,.42) 0%,rgba(25,205,255,.24) 100%) !important;
+    border:1px solid rgba(55,190,255,.98) !important;
+    color:#fff !important;
+    box-shadow:
+      0 0 0 1px rgba(55,190,255,.16),
+      0 8px 24px rgba(20,145,255,.28),
+      inset 0 1px 0 rgba(255,255,255,.14) !important;
+    text-shadow:0 1px 8px rgba(0,0,0,.28) !important;
+  }
+  .sheet .chip:not([aria-current="true"]):not([aria-pressed="true"]):not([aria-selected="true"]),
+  .sheet .choice:not([aria-current="true"]):not([aria-pressed="true"]):not([aria-selected="true"]),
+  .sheet .seg span:not(.active):not(.selected):not([aria-selected="true"]):not([aria-pressed="true"]){
+    background:rgba(20,34,57,.72) !important;
+    border-color:rgba(255,255,255,.09) !important;
+    color:var(--txt) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.025) !important;
+  }
+}

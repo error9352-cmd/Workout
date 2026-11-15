@@ -1,0 +1,25 @@
+/* ATHLETIC PHYSIQUE — Stage 12 Progression → Workout + Adaptive */
+.ap-stage12-progress-note{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  gap:6px 10px;
+  align-items:center;
+  margin:0 0 14px;
+  padding:12px 14px;
+  border:1px solid var(--ap-border,rgba(255,255,255,.1));
+  border-radius:var(--ap-radius-sm,12px);
+  background:var(--ap-surface-2,rgba(255,255,255,.035));
+}
+.ap-stage12-progress-note .ap-stage12-kicker{font-size:10px;font-weight:800;letter-spacing:.09em;color:var(--ap-muted,#9ca3af);grid-column:1/-1}
+.ap-stage12-progress-note strong{min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ap-stage12-progress-note p{grid-column:2/3;margin:0;color:var(--ap-text,#f3f4f6);font-size:13px;font-weight:700}
+.ap-stage12-progress-note small{grid-column:1/-1;color:var(--ap-muted,#9ca3af);line-height:1.45}
+.ap-stage12-status{display:inline-flex;align-items:center;justify-content:center;min-height:24px;padding:3px 8px;border:1px solid var(--ap-border,rgba(255,255,255,.1));border-radius:999px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.ap-stage12-status.up{color:var(--ap-accent,#60a5fa)}
+.ap-stage12-status.down{color:#fca5a5}
+.ap-stage12-status.stable{color:var(--ap-muted,#9ca3af)}
+@media(max-width:699px){
+  .ap-stage12-progress-note{grid-template-columns:minmax(0,1fr) auto;padding:11px 12px}
+  .ap-stage12-progress-note p{grid-column:1/-1}
+  .ap-stage12-progress-note small{grid-column:1/-1}
+}

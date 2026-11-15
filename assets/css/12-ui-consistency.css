@@ -1,0 +1,291 @@
+/* Athletic Physique — UI Consistency v1
+   Visual-only normalization layer. No workout/data logic is changed.
+*/
+:root{
+  --ui-radius-sm:10px;
+  --ui-radius-md:14px;
+  --ui-radius-lg:18px;
+  --ui-gap:10px;
+  --ui-control-h:44px;
+  --ui-border:rgba(148,163,184,.14);
+}
+
+/* Prevent flex/grid children from forcing cards wider than their container. */
+body:not(.wk) .card,
+body:not(.wk) .hero,
+body:not(.wk) .row,
+body:not(.wk) .grid,
+body:not(.wk) .f,
+body:not(.wk) .cmp,
+body:not(.wk) .homev,
+body:not(.wk) .pgv,
+body:not(.wk) .home-section,
+body:not(.wk) .home-weekly-grid,
+body:not(.wk) .weekly-coach-v1,
+body:not(.wk) .gym-intel-panel,
+body:not(.wk) .gym-progress-intel{
+  min-width:0;
+}
+
+/* Text should stay inside its visual frame instead of pushing siblings away. */
+body:not(.wk) .card h1,
+body:not(.wk) .card h2,
+body:not(.wk) .card h3,
+body:not(.wk) .card h4,
+body:not(.wk) .card p,
+body:not(.wk) .card small,
+body:not(.wk) .card strong,
+body:not(.wk) .card span,
+body:not(.wk) .hero h1,
+body:not(.wk) .hero h2,
+body:not(.wk) .hero p,
+body:not(.wk) .sub,
+body:not(.wk) .home-section-title,
+body:not(.wk) .dashboard-head{
+  max-width:100%;
+  overflow-wrap:anywhere;
+}
+
+/* Stable heading rhythm across pages. */
+body:not(.wk) main#app > h1{
+  line-height:1.08;
+  letter-spacing:-.02em;
+}
+body:not(.wk) main#app > .sub{
+  line-height:1.45;
+}
+body:not(.wk) .home-section-title,
+body:not(.wk) .section-title,
+body:not(.wk) .page-title{
+  min-width:0;
+}
+body:not(.wk) .home-section-title h2,
+body:not(.wk) .section-title h2{
+  line-height:1.15;
+}
+
+/* Consistent control geometry. */
+body:not(.wk) .btn,
+body:not(.wk) .ok,
+body:not(.wk) .pk,
+body:not(.wk) button:not(.sh-x):not(.close),
+body:not(.wk) input,
+body:not(.wk) select,
+body:not(.wk) textarea{
+  box-sizing:border-box;
+}
+body:not(.wk) .btn,
+body:not(.wk) .ok,
+body:not(.wk) .pk{
+  min-height:var(--ui-control-h);
+  line-height:1.15;
+}
+body:not(.wk) input,
+body:not(.wk) select{
+  min-height:var(--ui-control-h);
+}
+body:not(.wk) textarea{
+  min-height:96px;
+  line-height:1.45;
+}
+
+/* Buttons with long labels must wrap cleanly rather than overflow a card. */
+body:not(.wk) .btn,
+body:not(.wk) .ok,
+body:not(.wk) .pk{
+  white-space:normal;
+  overflow-wrap:anywhere;
+  text-align:center;
+}
+
+/* Equal visual rhythm for common card grids. */
+body:not(.wk) .grid,
+body:not(.wk) .dashboard-stats,
+body:not(.wk) .home-weekly-stats,
+body:not(.wk) .weekly-coach-v1 .wc-stats,
+body:not(.wk) .weekly-coach-v1 .wc-grid,
+body:not(.wk) .gym-intel-panel .gi-stats,
+body:not(.wk) .gym-intel-panel .gi-grid,
+body:not(.wk) .hg-weekly-stats,
+body:not(.wk) .hg-eval-grid{
+  align-items:stretch;
+}
+
+body:not(.wk) .weekly-coach-v1 .wc-stats > div,
+body:not(.wk) .weekly-coach-v1 .wc-panel,
+body:not(.wk) .gym-intel-panel .gi-stats > div,
+body:not(.wk) .gym-intel-panel .gi-grid > div,
+body:not(.wk) .hg-weekly-stats > div,
+body:not(.wk) .hg-eval-grid > div{
+  min-width:0;
+  box-sizing:border-box;
+}
+
+/* Weekly Coach: decision pill stays inside its frame on narrow widths. */
+body:not(.wk) .weekly-coach-v1 .wc-head{
+  min-width:0;
+}
+body:not(.wk) .weekly-coach-v1 .wc-head > div:first-child{
+  min-width:0;
+  flex:1 1 auto;
+}
+body:not(.wk) .weekly-coach-v1 .wc-decision{
+  flex:0 1 auto;
+  max-width:48%;
+  min-width:0;
+  white-space:normal;
+  text-align:center;
+  line-height:1.2;
+  padding:6px 10px;
+}
+body:not(.wk) .weekly-coach-v1 .wc-stats b{
+  font-variant-numeric:tabular-nums;
+}
+body:not(.wk) .weekly-coach-v1 .wc-change{
+  min-width:0;
+}
+body:not(.wk) .weekly-coach-v1 .wc-change > span:first-child{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+body:not(.wk) .weekly-coach-v1 .wc-change-mark{
+  flex:0 0 auto;
+  max-width:42%;
+  white-space:normal;
+  text-align:right;
+}
+
+/* Gym Intelligence / Home Gym decision badges use the same geometry. */
+body:not(.wk) .gi-badge,
+body:not(.wk) .hg-weekly-badge,
+body:not(.wk) .hg-eval-badge{
+  max-width:100%;
+  white-space:normal;
+  text-align:center;
+  line-height:1.2;
+  box-sizing:border-box;
+}
+body:not(.wk) .gi-head,
+body:not(.wk) .hg-weekly-head,
+body:not(.wk) .hg-eval-head{
+  min-width:0;
+}
+body:not(.wk) .gi-head > div:first-child,
+body:not(.wk) .hg-weekly-head > div:first-child,
+body:not(.wk) .hg-eval-head > div:first-child{
+  min-width:0;
+  flex:1 1 auto;
+}
+
+/* Stat values: never let a long value destroy the grid. */
+body:not(.wk) .stat,
+body:not(.wk) .dashboard-stats .stat,
+body:not(.wk) .home-weekly-stats .stat{
+  min-width:0;
+  box-sizing:border-box;
+}
+body:not(.wk) .stat .num,
+body:not(.wk) .dashboard-stats .num,
+body:not(.wk) .home-weekly-stats .num{
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* History rows: title/date remain aligned without forcing horizontal overflow. */
+body:not(.wk) .history-item,
+body:not(.wk) .history-item > summary,
+body:not(.wk) .history-title,
+body:not(.wk) .history-date{
+  min-width:0;
+}
+body:not(.wk) .history-title strong{
+  overflow-wrap:anywhere;
+  white-space:normal;
+}
+body:not(.wk) .history-date{
+  overflow-wrap:anywhere;
+  white-space:normal;
+}
+
+/* Modal/sheet content should have a predictable inner width. */
+body:not(.wk) .sheet,
+body:not(.wk) .sheet .sh-body,
+body:not(.wk) .sheet .f,
+body:not(.wk) .sheet .row{
+  min-width:0;
+  box-sizing:border-box;
+}
+body:not(.wk) .sheet h2,
+body:not(.wk) .sheet h3,
+body:not(.wk) .sheet p,
+body:not(.wk) .sheet label{
+  overflow-wrap:anywhere;
+}
+
+/* Navigation: identical geometry and label alignment across desktop/mobile. */
+body:not(.wk) nav .tab{
+  box-sizing:border-box;
+  min-width:0;
+  line-height:1.15;
+  text-align:center;
+}
+body:not(.wk) nav .tab span,
+body:not(.wk) nav .tab small{
+  max-width:100%;
+  overflow-wrap:anywhere;
+}
+
+/* Desktop: keep page sections visually centered and symmetrical. */
+@media(min-width:901px){
+  body:not(.wk) main#app{
+    margin-left:auto;
+    margin-right:auto;
+  }
+  body:not(.wk) .home-section,
+  body:not(.wk) .pgv{
+    width:100%;
+  }
+  body:not(.wk) .home-section-title{
+    padding-left:2px;
+    padding-right:2px;
+  }
+}
+
+/* Tablet: prevent two-column cards from becoming cramped. */
+@media(max-width:900px){
+  body:not(.wk) .weekly-coach-v1 .wc-head,
+  body:not(.wk) .gi-head,
+  body:not(.wk) .hg-weekly-head,
+  body:not(.wk) .hg-eval-head{
+    gap:10px;
+  }
+  body:not(.wk) .weekly-coach-v1 .wc-decision{
+    max-width:44%;
+  }
+}
+
+/* Mobile: all text and badges get enough breathing room. */
+@media(max-width:640px){
+  body:not(.wk) .weekly-coach-v1 .wc-head,
+  body:not(.wk) .gi-head,
+  body:not(.wk) .hg-weekly-head,
+  body:not(.wk) .hg-eval-head{
+    flex-wrap:wrap;
+  }
+  body:not(.wk) .weekly-coach-v1 .wc-decision,
+  body:not(.wk) .gi-badge,
+  body:not(.wk) .hg-weekly-badge,
+  body:not(.wk) .hg-eval-badge{
+    max-width:100%;
+  }
+  body:not(.wk) .weekly-coach-v1 .wc-change-mark{
+    max-width:100%;
+    text-align:left;
+  }
+  body:not(.wk) .btn,
+  body:not(.wk) .ok,
+  body:not(.wk) .pk{
+    min-height:42px;
+  }
+}

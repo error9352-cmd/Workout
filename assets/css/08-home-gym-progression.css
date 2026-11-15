@@ -1,0 +1,28 @@
+/* Home Gym progression engine */
+.hg-progress-panel{margin-top:14px;overflow:hidden}
+.hg-progress-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.hg-progress-kicker{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--blue2,var(--accent))}
+.hg-progress-head h2{margin:5px 0 3px;font-size:20px}
+.hg-progress-head .sub{margin:0;max-width:680px}
+.hg-cycle-badge{min-width:54px;height:54px;border:1px solid var(--line);border-radius:16px;display:grid;place-items:center;font-weight:800;background:var(--card2,rgba(255,255,255,.04))}
+.hg-progress-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:16px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.hg-progress-stats>div{padding:12px 14px;border-right:1px solid var(--line)}
+.hg-progress-stats>div:last-child{border-right:0}
+.hg-progress-stats span{display:block;font-size:9px;font-weight:800;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
+.hg-progress-stats b{font-size:14px}
+.hg-next-progress{margin-top:14px;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card2,rgba(255,255,255,.025))}
+.hg-next-progress>b{font-size:12px}
+.hg-next-progress>div{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-top:1px solid var(--line);margin-top:8px}
+.hg-next-progress>div span{font-size:12px;min-width:0}
+.hg-next-progress>div strong{font-size:11px;text-align:right;color:var(--blue2,var(--accent))}
+.hg-next-progress p{margin:7px 0 0;color:var(--muted);font-size:11px;line-height:1.5}
+.hg-progress-foot{margin:11px 2px 0;color:var(--muted);font-size:10px;line-height:1.5}
+@media(max-width:560px){
+  .hg-progress-head{gap:10px}
+  .hg-cycle-badge{min-width:48px;height:48px;border-radius:14px}
+  .hg-progress-stats{grid-template-columns:1fr}
+  .hg-progress-stats>div{border-right:0;border-bottom:1px solid var(--line)}
+  .hg-progress-stats>div:last-child{border-bottom:0}
+  .hg-next-progress>div{align-items:flex-start;flex-direction:column;gap:3px}
+  .hg-next-progress>div strong{text-align:left}
+}

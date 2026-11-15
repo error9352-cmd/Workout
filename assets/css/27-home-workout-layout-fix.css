@@ -1,0 +1,55 @@
+/* ATHLETIC PHYSIQUE — Stage 19 Home Workout Layout Fix
+   Fixes desktop/tablet flex sizing inherited from the global .btn width:100% rule.
+   Keeps compact action buttons beside their content instead of collapsing text columns. */
+
+/* Desktop + tablet: action buttons in horizontal information rows must size to content. */
+@media(min-width:700px){
+  .home-workout-head .btn,
+  .home-gym-personal-note .btn,
+  .hg-goal-card .btn{
+    width:auto!important;
+    max-width:max-content;
+    flex:0 0 auto!important;
+    align-self:flex-start;
+  }
+
+  .home-workout-head>div,
+  .home-gym-personal-note>div,
+  .hg-goal-card>div{
+    min-width:0;
+    flex:1 1 auto;
+  }
+
+  .home-workout-head,
+  .home-gym-personal-note,
+  .hg-goal-card{
+    width:100%;
+    min-width:0;
+  }
+}
+
+/* Desktop: keep the Home Workout header balanced without creating excessive whitespace. */
+@media(min-width:1024px){
+  .home-workout-head{gap:24px}
+  .home-workout-head .sub{max-width:760px}
+  .home-gym-personal-note{gap:20px}
+  .hg-goal-card{gap:20px}
+}
+
+/* Tablet: preserve readable copy and keep controls compact. */
+@media(min-width:700px) and (max-width:1023px){
+  .home-workout-head{gap:16px}
+  .home-workout-head .sub{max-width:100%}
+  .home-gym-personal-note{gap:14px}
+  .hg-goal-card{gap:14px}
+}
+
+/* Mobile intentionally keeps the existing full-width action behavior. */
+@media(max-width:699px){
+  .home-workout-head .btn,
+  .home-gym-personal-note .btn,
+  .hg-goal-card .btn{
+    width:100%;
+    max-width:none;
+  }
+}

@@ -1,0 +1,11 @@
+/* Home Gym goal personalization */
+.hg-goal-card{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.hg-goal-kicker{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--blue2,var(--accent))}
+.hg-goal-card h2{margin:5px 0 3px;font-size:18px}
+.hg-goal-card .sub{margin:0;max-width:760px}
+.hg-goal-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.hg-goal-option{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:5px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--card2,rgba(255,255,255,.025));color:inherit;cursor:pointer}
+.hg-goal-option span{font-size:13px;font-weight:800}
+.hg-goal-option small{font-size:10px;line-height:1.45;color:var(--muted)}
+.hg-goal-option.selected{border-color:var(--accent);box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 35%,transparent) inset;background:color-mix(in srgb,var(--accent) 8%,var(--card2,transparent))}
+@media(max-width:560px){.hg-goal-card{align-items:flex-start;flex-direction:column}.hg-goal-card .btn{width:100%}.hg-goal-options{grid-template-columns:1fr}}

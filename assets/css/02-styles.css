@@ -1,0 +1,309 @@
+
+/* Dialog refinement: keep sheets as compact dialogs on phones, not full-screen panels. */
+.sheetbg{
+  box-sizing:border-box !important;
+}
+.sheet, .sheet.xs{
+  box-sizing:border-box !important;
+  min-width:0 !important;
+  height:auto !important;
+  overflow-x:hidden !important;
+  overscroll-behavior:contain !important;
+}
+.sheet > *, .sheet.xs > *{min-width:0}
+@media (max-width: 599px){
+  .sheetbg{
+    align-items:center !important;
+    justify-content:center !important;
+    padding:12px !important;
+    overflow-y:auto !important;
+  }
+  .sheet, .sheet.xs{
+    width:calc(100vw - 28px) !important;
+    max-width:440px !important;
+    max-height:min(78dvh, 660px) !important;
+    height:auto !important;
+    margin:auto !important;
+    padding:16px 16px calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    border:1px solid rgba(255,255,255,.10) !important;
+    border-bottom:1px solid rgba(255,255,255,.10) !important;
+    border-radius:18px !important;
+    box-shadow:0 16px 42px rgba(0,0,0,.42) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+  }
+  .sheet h2, .sheet.xs h2{
+    font-size:clamp(17px, 4.6vw, 20px) !important;
+    line-height:1.25 !important;
+    margin:4px 0 12px !important;
+  }
+  .sheet p, .sheet.xs p,
+  .sheet label, .sheet.xs label,
+  .sheet small, .sheet.xs small{
+    font-size:13px !important;
+    line-height:1.45 !important;
+  }
+  .sheet .grab, .sheet.xs .grab{display:none !important}
+  .sheet .grid, .sheet.xs .grid{gap:8px !important}
+  .sheet .stat, .sheet.xs .stat{min-width:0 !important;padding:10px 8px !important}
+  .sheet .stat .num, .sheet.xs .stat .num{
+    font-size:clamp(18px, 5vw, 23px) !important;
+    line-height:1.1 !important;
+  }
+  .sheet .stat small, .sheet.xs .stat small{font-size:11px !important}
+  .sheet textarea, .sheet input, .sheet select,
+  .sheet.xs textarea, .sheet.xs input, .sheet.xs select{
+    max-width:100% !important;
+    font-size:14px !important;
+  }
+  .sheet .btn, .sheet.xs .btn{
+    min-height:42px !important;
+    font-size:14px !important;
+  }
+  /* The blue account confirmation is also kept compact on small screens. */
+  .sbx-lo{padding:14px !important}
+  .sbx-loc{
+    width:min(340px, calc(100vw - 28px)) !important;
+    max-width:340px !important;
+    max-height:78dvh !important;
+    overflow-y:auto !important;
+    padding:18px 16px !important;
+    border-radius:18px !important;
+    gap:11px !important;
+  }
+  .sbx-loc h2{font-size:18px !important;line-height:1.25 !important}
+  .sbx-loc p{font-size:13px !important;line-height:1.45 !important}
+}
+@media (max-width: 380px){
+  .sheet, .sheet.xs{
+    width:calc(100vw - 24px) !important;
+    padding:14px 13px calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  .sheet .stat .num, .sheet.xs .stat .num{font-size:18px !important}
+}
+
+
+
+/* Compact WhatsApp/Instagram-style notifications on phones.
+   Clear old top+bottom constraints that caused fixed notifications to stretch. */
+@media (max-width: 600px){
+  #toast.toast,
+  .toast,
+  .prpop{
+    position:fixed !important;
+    top:auto !important;
+    right:auto !important;
+    left:50% !important;
+    bottom:calc(82px + env(safe-area-inset-bottom, 0px)) !important;
+    width:max-content !important;
+    min-width:0 !important;
+    max-width:min( min(360px, calc(100vw - 32px)), 92vw ) !important;
+    height:auto !important;
+    max-height: min(22dvh, 150px) !important;
+    margin:0 !important;
+    padding:11px 14px !important;
+    border-radius:14px !important;
+    box-sizing:border-box !important;
+    transform:translateX(-50%) !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:9px !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+    line-height:1.35 !important;
+    font-size:13px !important;
+    font-weight:600 !important;
+    box-shadow:0 8px 24px rgba(0,0,0,.28) !important;
+    z-index:10050 !important;
+  }
+  #toast.toast::before, .toast::before{
+    width:18px !important;
+    height:18px !important;
+    flex:0 0 18px !important;
+  }
+  .toast[hidden]{display:none !important}
+  .toast.bye{pointer-events:none !important}
+  .prpop{font-size:13px !important}
+}
+@media (max-width:380px){
+  #toast.toast,.toast,.prpop{
+    max-width:calc(100vw - 24px) !important;
+    padding:10px 12px !important;
+    font-size:12px !important;
+    bottom:calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+
+
+.sbx-b{display:none!important}
+.sbx-account-card{grid-column:1/-1;min-width:0}
+.sbx-account-card h2{margin-top:0}
+.sbx-account-state{display:flex;flex-direction:column;gap:10px}
+.sbx-account-identity{display:flex;align-items:center;gap:11px;min-width:0}
+.sbx-account-identity>div{display:flex;flex-direction:column;gap:3px;min-width:0}
+.sbx-account-identity b{font-size:14px;color:var(--text,#eef3ff)}
+.sbx-account-identity small{font-size:12px;color:var(--muted,#9aa8bd);overflow-wrap:anywhere}
+.sbx-account-actions{display:flex;gap:10px;flex-wrap:wrap}
+.sbx-account-actions .btn{margin:0}
+.sbx-account-feedback{font-size:12px;color:var(--muted,#9aa8bd);min-height:1em;margin:0}
+@media(max-width:600px){
+ .sbx-account-card{padding:16px}
+ .sbx-account-actions{display:grid;grid-template-columns:1fr}
+ .sbx-account-actions .btn{width:100%}
+}
+
+
+
+/* ===== v14: Workout scrolling fix =====
+   Use the document as the scroll container instead of locking body/main and
+   creating a nested .slide scroller. This avoids mobile scroll handoff/freezes
+   while preserving the workout header, controls, and bottom navigation. */
+body.wk{
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  padding-bottom:calc(92px + env(safe-area-inset-bottom,0px)) !important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:auto;
+}
+body.wk main{
+  height:auto !important;
+  min-height:100dvh !important;
+  overflow:visible !important;
+}
+body.wk .stick{
+  position:sticky !important;
+  top:env(safe-area-inset-top,0px) !important;
+  z-index:20 !important;
+}
+body.wk .slide{
+  flex:initial !important;
+  min-height:0 !important;
+  height:auto !important;
+  max-height:none !important;
+  overflow:visible !important;
+  overscroll-behavior:initial !important;
+  -webkit-overflow-scrolling:auto !important;
+  will-change:auto !important;
+}
+body.wk .slide.in-r,body.wk .slide.in-l{
+  animation:none !important;
+}
+body.wk main>.f,body.wk main>[data-cancel]{
+  flex:none !important;
+}
+@media(max-width:699px){
+  body.wk main{min-height:100dvh !important;padding-bottom:20px !important}
+  body.wk .stick{top:0 !important}
+}
+
+
+
+/* v15: mobile toast must be dismissible and never remain visible after its timer. */
+.toast[hidden], .prpop[hidden]{display:none !important;visibility:hidden !important;opacity:0 !important;pointer-events:none !important}
+.toast.bye{pointer-events:none !important}
+@media(max-width:600px){
+  #toast.toast{transition:none !important}
+  #toast.toast.bye{animation:toastOutMobile .42s cubic-bezier(.22,1,.36,1) forwards !important}
+  @keyframes toastOutMobile{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(-7px) scale(.992)}}
+}
+
+
+
+.dashboard-active-card{position:relative;overflow:hidden;border:1px solid rgba(96,165,250,.24)!important;background:linear-gradient(145deg,rgba(22,39,65,.98),rgba(14,23,39,.98))!important}
+.dashboard-active-card:after{content:"";position:absolute;width:150px;height:150px;right:-70px;top:-78px;border:1px solid rgba(96,165,250,.12);border-radius:50%;box-shadow:0 0 0 22px rgba(96,165,250,.018),0 0 0 44px rgba(96,165,250,.014);pointer-events:none}
+.dashboard-active-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.dashboard-active-label{font-size:10px;font-weight:800;letter-spacing:.14em;color:#74aaff;text-transform:uppercase;margin:0 0 6px}
+.dashboard-active-card h2{margin:0;font-size:18px}
+.dashboard-active-progress{margin-top:14px}
+.dashboard-active-bar{height:7px;border-radius:99px;background:rgba(148,163,184,.14);overflow:hidden}
+.dashboard-active-bar b{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#2F7BFF,#5eead4)}
+.dashboard-active-meta{display:flex;justify-content:space-between;gap:10px;margin-top:7px;font-size:11px;color:#8f9eb4}
+.dashboard-active-card .btn{position:relative;z-index:2;min-height:42px;margin-top:14px}
+.dashboard-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:560px){.dashboard-active-card{padding:15px!important}.dashboard-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.dashboard-stats .stat{min-height:92px}}
+
+
+
+/* v18: Personal Record + Progressive Overload */
+.pr-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.pr-item{border:1px solid var(--line,#26304a);background:rgba(18,27,45,.72);border-radius:14px;padding:13px;min-width:0}
+.pr-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.pr-item-name{font-weight:700;font-size:13px;line-height:1.3;min-width:0}
+.pr-item-date{font-size:10px;color:var(--muted,#8c97b2);white-space:nowrap}
+.pr-item-main{display:flex;align-items:baseline;gap:8px;margin-top:7px}
+.pr-item-weight{font-size:24px;font-weight:800;letter-spacing:-.02em}
+.pr-item-1rm{font-size:11px;color:var(--muted,#8c97b2)}
+.pr-item-note{font-size:11px;color:#9aa8bd;margin-top:5px;line-height:1.4}
+.pr-tag{display:inline-flex;align-items:center;min-height:22px;padding:0 7px;border-radius:999px;border:1px solid rgba(96,165,250,.28);background:rgba(47,123,255,.1);color:#9fc4ff;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.pr-current{margin-top:10px;padding:10px 11px;border-radius:12px;border:1px solid rgba(94,234,212,.18);background:rgba(20,45,48,.42);font-size:11px;color:#b9c9d9}
+.pr-current b{color:#e8f2ff}
+.overload-box{margin-top:12px;border:1px solid rgba(96,165,250,.2);border-radius:14px;padding:12px;background:linear-gradient(145deg,rgba(21,35,58,.82),rgba(13,21,36,.82))}
+.overload-box h3{font-size:13px;margin:0 0 5px}
+.overload-box p{margin:0;color:#9aa8bd;font-size:11px;line-height:1.5}
+@media(max-width:600px){.pr-panel{grid-template-columns:1fr}.pr-item{padding:12px}}
+
+
+
+.weekly-coach-card{border:1px solid rgba(95,145,255,.28);background:linear-gradient(180deg,rgba(35,49,82,.92),rgba(20,28,48,.96))}
+.weekly-coach-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.weekly-coach-badge{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border:1px solid rgba(95,145,255,.3);border-radius:999px;color:#9fc1ff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.weekly-coach-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px}
+.weekly-coach-stat{padding:11px;border:1px solid var(--line);border-radius:12px;background:rgba(8,14,27,.38)}
+.weekly-coach-stat small{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}
+.weekly-coach-stat strong{display:block;font-size:20px;line-height:1.1}
+.weekly-coach-stat span{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.weekly-coach-body{display:grid;grid-template-columns:1.15fr .85fr;gap:10px;margin-top:12px}
+.weekly-coach-panel{padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(8,14,27,.25)}
+.weekly-coach-panel h3{font-size:13px;margin:0 0 8px}
+.weekly-coach-panel p{margin:0;color:var(--text);line-height:1.55;font-size:13px}
+.weekly-coach-panel .muted{color:var(--muted)}
+.weekly-coach-list{display:grid;gap:7px}
+.weekly-coach-list div{display:flex;justify-content:space-between;gap:10px;font-size:12px}
+.weekly-coach-list span:last-child{text-align:right;color:var(--muted)}
+@media(max-width:699px){
+ .weekly-coach-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .weekly-coach-body{grid-template-columns:1fr}
+}
+
+
+
+/* Final Progress layout polish: consistent card sizing and predictable columns */
+.pgv{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));align-items:stretch;column-gap:18px;row-gap:18px;width:100%;box-sizing:border-box}
+.pgv>h1,.pgv>.chips,.pgv>.grid{grid-column:1/-1}
+.pgv>section.card{grid-column:span 6;min-width:0;width:100%;height:100%;box-sizing:border-box;align-self:stretch;overflow:hidden}
+.pgv>section.card:first-of-type{grid-column:1/-1}
+.pgv>section.card:has(.mrow){grid-column:1/-1}
+.pgv>section.card:has(.photo-timeline){grid-column:1/-1}
+.pgv>section.card h2{min-width:0}
+.pgv .physique-snapshot{grid-template-columns:repeat(4,minmax(0,1fr));align-items:stretch}
+.pgv .measurement-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+.pgv .measurement-grid .card-mini{min-width:0;min-height:118px;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box}
+.pgv .photo-timeline{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}
+.pgv .photo-timeline figure{min-width:0}
+.pgv .photo-timeline img{width:100%;max-height:360px;object-fit:cover}
+.pgv .pr-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:stretch}
+.pgv .pr-item{min-width:0;height:100%;box-sizing:border-box}
+.pgv .pr-current{margin-top:10px}
+.pgv .mrow{min-width:0}
+.pgv>section.card>svg{max-width:100%}
+@media(min-width:1280px){
+ .pgv{column-gap:20px;row-gap:20px}
+ .pgv>section.card{grid-column:span 4}
+ .pgv>section.card:first-of-type,.pgv>section.card:has(.mrow),.pgv>section.card:has(.photo-timeline){grid-column:1/-1}
+}
+@media(max-width:699px){
+ .pgv{display:flex;flex-direction:column;gap:13px}
+ .pgv>h1,.pgv>.chips,.pgv>.grid,.pgv>section.card{width:100%;max-width:100%;grid-column:auto}
+ .pgv>section.card{height:auto}
+ .pgv .physique-snapshot{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .pgv .measurement-grid{grid-template-columns:1fr}
+ .pgv .photo-timeline{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .pgv .pr-panel{grid-template-columns:1fr}
+}
+@media(max-width:390px){
+ .pgv .physique-snapshot{gap:7px}
+ .pgv .physique-metric{padding:11px}
+ .pgv .physique-metric .num{font-size:20px}
+ .pgv .photo-timeline{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+}

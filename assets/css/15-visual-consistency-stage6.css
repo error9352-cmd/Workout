@@ -1,0 +1,268 @@
+/* ATHLETIC PHYSIQUE — Stage 6 visual consistency
+   Shared visual language for Gym, Home Gym, Weekly Coach, History and dashboard surfaces.
+   Intentionally uses existing design tokens; no new color system is introduced. */
+
+:root{
+  --ap-surface-1:var(--card,#111A2A);
+  --ap-surface-2:var(--surface-raised,#18243A);
+  --ap-border:var(--line,rgba(148,163,184,.16));
+  --ap-text:var(--ink,#F1F5FC);
+  --ap-muted:var(--mute,#94A3B8);
+  --ap-accent:var(--blue2,#78A9FF);
+  --ap-radius:16px;
+  --ap-radius-sm:12px;
+  --ap-gap:12px;
+}
+
+/* Shared panel anatomy */
+.hg-progress-panel,
+.hg-goal-card,
+.hg-weekly-adaptation,
+.hg-session-eval,
+.gym-session-eval,
+.weekly-coach-v1,
+.wc-latest-eval,
+.home-gym-personal-note,
+.home-gym-summary,
+.home-gym-planner{
+  box-sizing:border-box;
+}
+
+.hg-progress-panel,
+.hg-goal-card,
+.hg-weekly-adaptation,
+.gym-session-eval,
+.weekly-coach-v1,
+.home-gym-personal-note,
+.home-gym-summary{
+  border:1px solid var(--ap-border);
+  border-radius:var(--ap-radius);
+  background:linear-gradient(150deg,rgba(255,255,255,.025),transparent 72%),var(--ap-surface-1);
+  box-shadow:0 8px 24px rgba(0,0,0,.14);
+}
+
+/* Do not double-frame nested evaluation panels. */
+.hg-session-eval,
+.gym-session-eval,
+.wc-latest-eval{
+  background:rgba(255,255,255,.018);
+  box-shadow:none;
+}
+
+/* Shared section header hierarchy */
+.hg-progress-kicker,
+.hg-goal-kicker,
+.wc-latest-eval-kicker,
+.gse-kicker,
+.hg-eval-head .hg-eval-kicker{
+  color:var(--ap-accent);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+}
+
+.hg-progress-head h2,
+.hg-goal-card h2,
+.hg-weekly-head h2,
+.wc-latest-eval h3,
+.gse-head strong,
+.hg-eval-head h2{
+  color:var(--ap-text);
+}
+
+.hg-progress-head .sub,
+.hg-goal-card .sub,
+.hg-weekly-next p,
+.wc-latest-eval p,
+.gse-head p,
+.hg-eval-next,
+.hg-progress-foot{
+  color:var(--ap-muted);
+}
+
+/* Shared compact metric cells */
+.hg-progress-stats>div,
+.hg-weekly-stats>div,
+.hg-eval-grid>div,
+.gse-row,
+.wc-latest-eval-row,
+.home-personal-preview>div{
+  background:rgba(255,255,255,.022);
+  border:1px solid var(--ap-border);
+  border-radius:var(--ap-radius-sm);
+}
+
+/* Shared decision badges */
+.hg-weekly-badge,
+.hg-eval-badge,
+.gse-badge,
+.wc-latest-eval-badge,
+.gi-badge,
+.wc-decision{
+  border-radius:999px;
+  min-height:30px;
+  padding:6px 10px;
+  line-height:1.15;
+  font-weight:800;
+  letter-spacing:.05em;
+  text-align:center;
+  box-sizing:border-box;
+}
+
+/* Program/mode selectors use the same selected-state language. */
+.workout-mode-switch,
+.home-gym-summary,
+.home-gym-planner,
+.hg-goal-options,
+.home-equipment-grid{
+  min-width:0;
+}
+
+.workout-mode-switch{
+  max-width:100%;
+  padding:4px;
+  border-radius:14px;
+  background:var(--ap-surface-2);
+  border-color:var(--ap-border);
+}
+
+.workout-mode-btn,
+.hg-goal-option,
+.home-eq-chip,
+.pk,
+.chip{
+  transition:background .16s ease,border-color .16s ease,color .16s ease,transform .12s ease,box-shadow .16s ease;
+}
+
+.workout-mode-btn[aria-selected="true"],
+.hg-goal-option.selected,
+.home-eq-chip[aria-pressed="true"],
+.pk[aria-current="true"],
+.chip[aria-current="true"]{
+  border-color:var(--blue,#397BFF);
+  box-shadow:inset 0 0 0 1px rgba(120,169,255,.16),0 4px 14px rgba(47,123,255,.10);
+}
+
+/* Home Gym summary becomes a clean information strip, matching Gym stats. */
+.home-gym-summary{
+  box-shadow:none;
+}
+.home-gym-summary>div{
+  min-width:0;
+  padding:14px 16px;
+}
+.home-gym-summary span,
+.home-personal-preview span,
+.hg-progress-stats span,
+.hg-weekly-stats span{
+  text-transform:uppercase;
+}
+
+/* Buttons: one consistent primary hierarchy. */
+.home-workout-head .btn,
+.home-gym-personal-note .btn,
+.hg-goal-card .btn,
+.dashboard-plan-actions .btn{
+  min-height:46px;
+  border-radius:13px;
+}
+
+.home-workout-head .btn,
+.home-gym-personal-note .btn,
+.hg-goal-card .btn{
+  flex:0 0 auto;
+}
+
+/* Exercise library cards and workout cards share the same corner/spacing rhythm. */
+.ex-card,
+.exercise-card,
+.library-card,
+.xcard,
+.workout-card{
+  min-width:0;
+  border-radius:var(--ap-radius);
+}
+
+/* Prevent long program/exercise labels from creating uneven card heights. */
+.hg-goal-option span,
+.home-eq-chip b,
+.home-personal-preview b,
+.wc-latest-eval-row b,
+.gse-row b,
+.hg-eval-row b{
+  overflow-wrap:anywhere;
+}
+
+/* History evaluation should read as one inset component in both modes. */
+.history-session-evaluation{
+  border-radius:14px!important;
+  background:rgba(255,255,255,.018)!important;
+  border-color:rgba(120,169,255,.18)!important;
+}
+
+/* Consistent spacing between stacked sections. */
+body:not(.wk) #app > section + section,
+body:not(.wk) .pgv > section + section{
+  margin-top:0;
+}
+
+/* Desktop: give intelligent panels the same visual width and breathing room. */
+@media(min-width:900px){
+  .hg-progress-panel,
+  .hg-goal-card,
+  .hg-weekly-adaptation,
+  .weekly-coach-v1,
+  .home-gym-personal-note,
+  .home-gym-summary{
+    width:100%;
+  }
+
+  .home-gym-summary>div{
+    min-height:72px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+}
+
+/* Tablet/mobile: preserve hierarchy without oversized panels. */
+@media(max-width:699px){
+  .hg-progress-panel,
+  .hg-goal-card,
+  .hg-weekly-adaptation,
+  .gym-session-eval,
+  .weekly-coach-v1,
+  .home-gym-personal-note,
+  .home-gym-summary{
+    border-radius:15px;
+  }
+
+  .hg-progress-panel,
+  .hg-goal-card,
+  .hg-weekly-adaptation,
+  .weekly-coach-v1,
+  .home-gym-personal-note{
+    padding:14px;
+  }
+
+  .home-gym-summary>div{
+    padding:12px 14px;
+  }
+}
+
+@media(max-width:420px){
+  .hg-progress-panel,
+  .hg-goal-card,
+  .hg-weekly-adaptation,
+  .weekly-coach-v1,
+  .home-gym-personal-note{
+    padding:13px;
+  }
+
+  .hg-weekly-head,
+  .hg-progress-head,
+  .hg-goal-card{
+    gap:11px;
+  }
+}

@@ -1,0 +1,429 @@
+/* Athletic Physique — Responsive & device rules */
+
+/* ===== Original style block 4 (line 505) id="responsive" ===== */
+
+/* ===== RESPONSIF otomatis: HP, tablet, laptop =====
+   HP (<700px)        : tampilan asli, satu kolom, navigasi bawah
+   Tablet (>=700px)   : konten lebih lebar, kartu 2 kolom, navigasi bawah terpusat
+   Landscape/laptop   : navigasi samping (rail 88px, sidebar 248px di >=1280px)
+   Layar besar >=1680 : kartu 3 kolom */
+:root{--sbw:0px}
+main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wl,.wr{display:contents}
+
+/* ---------- Tablet & lebih besar ---------- */
+@media (min-width:700px){
+  main{max-width:940px;padding-top:28px;padding-bottom:36px;padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:max(28px,env(safe-area-inset-right,0px))}
+  h1{font-size:52px}
+  nav{padding-left:max(6px,calc((100vw - 640px)/2));padding-right:max(6px,calc((100vw - 640px)/2))}
+
+  body:not(.wk) #app,.pgv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start;grid-auto-flow:row dense}
+  .pgv{grid-column:1/-1}
+  body:not(.wk) #app>*,.pgv>*{grid-column:1/-1;margin-top:0;min-width:0}
+  body:not(.wk) #app>section.card,.pgv>section.card{grid-column:auto}
+  body:not(.wk) #app>.card.hero{grid-column:span 2}
+  body:not(.wk) #app>h1+.sub{margin-top:-14px}
+  body:not(.wk) #app>h2{margin-top:0!important;margin-bottom:-10px}
+  .pgv>.chips,#app>.chips{margin-top:0}
+  body:not(.wk) #app>button.btn{width:auto;justify-self:start;min-width:260px}
+
+  /* Hero: judul, lalu tombol berdampingan */
+  .card.hero{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:22px 24px}
+  .card.hero>.day,.card.hero>.sub{flex:1 1 100%}
+  .card.hero>.btn{flex:1 1 220px;max-width:340px;margin-top:10px;width:auto}
+
+  /* Strip minggu menjadi kartu */
+  .week{margin-top:0;padding:18px 14px;border-radius:22px;align-items:center;align-self:stretch;
+    background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.012)),var(--card);border:1px solid rgba(255,255,255,.075)}
+
+  /* Daftar hari: jadi grid, bukan geser horizontal */
+  body:not(.wk) .dpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));overflow:visible;margin:10px 0 0;padding:2px 0 10px;scroll-snap-type:none}
+  .dp{flex:none}
+
+  /* Dock tombol mulai */
+
+  /* Riwayat: daftar 2 kolom */
+  #app>section.card:has(>details.row){grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:36px;align-content:start}
+  #app>section.card:has(>details.row)>details.row:nth-child(-n+2){border-top:0}
+
+  .grid{grid-column:1/-1}
+  .card .f .btn{white-space:nowrap;padding-left:12px;padding-right:12px}
+  .gal{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .bdg{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}
+  .exi,.exw{max-width:380px}
+
+  /* Pop-up jadi dialog di tengah */
+  .sheetbg{align-items:center;padding:24px}
+  .sheet{max-width:600px;border-radius:26px;border-bottom:1px solid rgba(255,255,255,.08);max-height:min(92%,900px);animation:dlgIn .35s var(--ease) both}
+  .sheet.xs{max-height:min(88dvh,900px)}
+  .grab{display:none}
+  .sheetbg.out .sheet{transform:translateY(16px) scale(.98)}
+  @keyframes dlgIn{from{opacity:0;transform:translateY(24px) scale(.97)}}
+  .toast,.prpop{max-width:560px}
+
+  /* Layar workout aktif */
+  body.wk main{max-width:980px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+  body.wk main>.f,body.wk main>[data-cancel]{width:100%;max-width:560px;margin-left:auto;margin-right:auto}
+  body.wk .exw .exi{height:clamp(150px,24vh,300px)}
+}
+
+/* Slide workout 2 kolom (gambar & teknik | pencatatan set) */
+@media (min-width:860px){
+  body.wk .slide .card{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);column-gap:28px;align-items:start;padding:16px 20px}
+  body.wk .slide .wl,body.wk .slide .wr{display:block;min-width:0}
+  body.wk .slide .wr>.set:first-child,body.wk .slide .wr>.prev:first-child{margin-top:0}
+}
+
+/* ---------- Navigasi samping: laptop, tablet landscape, HP landscape ---------- */
+@media (min-width:1024px),(min-width:700px) and (max-height:520px){
+  :root{--sbw:88px}
+  body{padding-left:var(--sbw);padding-bottom:0}
+  nav{top:0;bottom:0;right:auto;left:0;width:calc(var(--sbw) + env(safe-area-inset-left,0px));display:flex;flex-direction:column;justify-content:flex-start;gap:6px;
+    padding:20px 8px 20px calc(8px + env(safe-area-inset-left,0px));border-top:0;border-right:1px solid rgba(255,255,255,.08);border-radius:0 22px 22px 0;box-shadow:10px 0 30px rgba(0,0,0,.3)}
+  nav::before{content:"";flex:none;width:44px;height:44px;margin:2px auto 14px;border-radius:12px;background:url(icon-192.png) center/cover}
+  nav .tab{flex:0 1 72px;min-height:44px;width:100%;border-radius:14px}
+  main{max-width:1160px;padding-bottom:48px}
+  body.wk main{max-width:1060px;height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+  body.resting main{padding-bottom:110px}
+  body .rest{left:calc(var(--sbw) + 16px);right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:640px}
+  .toast{left:calc(var(--sbw) + 16px);right:16px}
+  .prpop{left:calc(var(--sbw) + 16px);right:16px}
+}
+/* Layar pendek (HP landscape): rapatkan */
+@media (min-width:700px) and (max-height:520px){
+  nav{padding-top:8px;padding-bottom:8px;gap:2px}
+  nav::before{display:none}
+  nav .tab{padding:2px 0 4px;gap:2px;min-height:40px}
+  nav .tab[aria-current=page]::after{display:none}
+  nav .tab[aria-current=page] svg{height:26px}
+  main{padding-top:14px}
+  .sheet,.sheet.xs{max-height:100%}
+  .sheetbg{padding:8px}
+}
+/* Sidebar penuh di laptop */
+@media (min-width:1280px) and (min-height:521px){
+  :root{--sbw:248px}
+  nav{padding:22px 14px}
+  nav::before{width:auto;height:auto;margin:2px 12px 24px;background:none;border-radius:0;color:#fff;font:700 26px/1.1 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.02em;content:"Athletic Physique"}
+  nav .tab{flex:none;flex-direction:row;justify-content:flex-start;gap:14px;padding:0 14px;min-height:50px;font-size:16px}
+  nav .tab[aria-current=page]{background:rgba(var(--a1r),.16);color:#fff}
+  nav .tab[aria-current=page] svg{background:none;box-shadow:none;padding:0;width:24px;height:24px;color:var(--b2)}
+  nav .tab[aria-current=page]::after{display:none}
+  main{max-width:1180px;padding-left:36px;padding-right:36px}
+}
+/* Layar sangat lebar: 3 kolom */
+@media (min-width:1680px) and (min-height:521px){
+  main{max-width:1500px}
+  body:not(.wk) #app,.pgv{grid-template-columns:repeat(3,minmax(0,1fr))}
+  body:not(.wk) #app>.card.hero{grid-column:span 2}
+  #app>section.card:has(>details.row){grid-column:span 2}
+}
+
+/* ---------- Mouse & keyboard (laptop) ---------- */
+@media (hover:hover) and (pointer:fine){
+  .btn:hover{filter:brightness(1.1)}
+  .btn.ghost:hover{background:rgba(255,255,255,.1)}
+  .chip:hover,.pk:hover,.dp:hover,.th:hover{border-color:rgba(var(--b2r),.6)}
+  nav .tab:hover{color:#fff;background:rgba(255,255,255,.05)}
+  summary:hover{color:#fff}
+  *{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent}
+}
+
+
+/* ===== Original style block 5 (line 634) id="active-workout-layout-v1" ===== */
+
+/* Active Workout — perapian tahap 1 */
+body.wk main{gap:0}
+body.wk .stick{padding:8px 2px 10px;border-bottom:1px solid rgba(255,255,255,.07)}
+body.wk .stick .mute{font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+body.wk .stick .bar{height:7px;margin-top:9px;background:rgba(255,255,255,.08)}
+body.wk .slide{padding:2px 2px 12px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+body.wk .slide .card{margin:10px 0 12px;padding:16px;background:linear-gradient(145deg,rgba(255,255,255,.035),transparent 48%),var(--card);border:1px solid rgba(255,255,255,.065);border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,.13)}
+body.wk .slide h2{font-size:clamp(24px,5vw,30px);line-height:1.08;letter-spacing:.015em}
+body.wk .slide .hd{align-items:center;gap:10px}
+body.wk .slide .hd .pl{flex:none;min-width:62px;margin:0}
+body.wk .slide .wl>.mute{font-size:14px;margin-top:5px}
+body.wk .slide .exw{width:100%;max-width:360px;margin:12px auto 4px;padding:8px;border:1px solid rgba(255,255,255,.06);border-radius:18px;background:radial-gradient(ellipse at 50% 40%,rgba(59,130,246,.10),transparent 68%),#101827;overflow:hidden}
+body.wk .slide .exw .exi{display:block;width:auto;max-width:100%;height:clamp(158px,25vh,220px);object-fit:contain;margin:0 auto}
+body.wk .slide .mus2{margin-top:10px;padding:8px 12px;border:1px solid rgba(255,255,255,.045);border-radius:14px}
+body.wk .slide .mus2 summary{min-height:38px}
+body.wk .slide .xdt{margin-top:10px;background:rgba(255,255,255,.018)}
+body.wk .slide .pvl{padding:10px 12px;margin:0 0 10px;border:1px solid rgba(255,255,255,.045);line-height:1.45}
+body.wk .slide .set.sh{margin:10px 0 0!important;padding:0 4px;grid-template-columns:38px minmax(0,1fr) minmax(0,1fr) 104px;gap:8px}
+body.wk .slide .set.sh small{text-align:center;font-size:11px;letter-spacing:.1em}
+body.wk .slide .set.set{grid-template-columns:38px minmax(0,1fr) minmax(0,1fr) 104px;gap:8px;margin-top:8px;padding:0}
+body.wk .slide .set.set input{width:100%;min-width:0;min-height:48px;padding:8px 4px;border-radius:12px;text-align:center;font-size:20px;background:#111a2b}
+body.wk .slide .set.set .ok{min-height:48px;border-radius:12px;font-size:17px;white-space:nowrap}
+body.wk .slide .set.set .wb{width:38px;height:42px;min-height:42px;border-radius:12px;background:rgba(255,255,255,.045)}
+body.wk .slide .set.done{background:rgba(52,211,153,.045);border-radius:13px}
+body.wk .slide .rpe{padding:0 2px 2px 46px;gap:6px}
+body.wk .slide .rpe button{min-height:34px;border-radius:9px}
+body.wk .slide .rpec{font-size:12px}
+body.wk .slide .adj2{margin:8px 0 2px 46px;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;gap:6px}
+body.wk .slide .f{gap:8px;margin-top:12px}
+body.wk .slide .f .btn{flex:1;min-width:0;padding:8px 6px;white-space:normal;line-height:1.15;font-size:17px}
+body.wk .snr{margin:7px 2px 8px;font-size:13px}
+body.wk .snr .snb{gap:6px}
+body.wk .snr .snb .chip{min-height:36px;padding:4px 12px;font-size:14px}
+body.wk main>[data-cancel]{flex:none;width:100%;margin:4px auto 0;padding:5px 10px;min-height:36px;border:1px solid rgba(255,255,255,.055);border-radius:12px;font-size:14px}
+body.wk .slide .chip{font-size:14px}
+@media (max-width:379px){
+ body.wk main{padding-left:10px;padding-right:10px}
+ body.wk .slide .card{padding:12px}
+ body.wk .slide .set.sh,body.wk .slide .set.set{grid-template-columns:32px minmax(0,1fr) minmax(0,1fr) 82px;gap:5px}
+ body.wk .slide .set.set .wb{width:32px}
+ body.wk .slide .set.set input{font-size:18px}
+ body.wk .slide .set.set .ok{font-size:15px}
+ body.wk .slide .rpe{padding-left:38px;gap:4px}
+ body.wk .slide .adj2{margin-left:38px}
+}
+@media (min-width:700px){
+ body.wk main{padding-top:12px;padding-bottom:12px}
+ body.wk .stick{padding:8px 4px 12px}
+ body.wk .slide{padding:8px 4px 14px}
+ body.wk .slide .card{margin:4px 0 10px;padding:20px;column-gap:clamp(24px,3vw,42px);border-radius:24px}
+ body.wk .slide .wl{position:sticky;top:0;align-self:start}
+ body.wk .slide .exw{max-width:100%;margin-top:16px}
+ body.wk .slide .exw .exi{height:clamp(210px,32vh,340px);width:100%;max-width:100%}
+ body.wk .slide .wr{min-width:0;padding-top:2px}
+ body.wk .slide .set.sh,body.wk .slide .set.set{grid-template-columns:40px minmax(0,1fr) minmax(0,1fr) 104px}
+ body.wk .slide .set.set input,body.wk .slide .set.set .ok{min-height:52px}
+ body.wk .slide .rpe{padding-left:48px}
+ body.wk .slide .adj2{margin-left:48px}
+ body.wk main>[data-cancel]{max-width:560px}
+}
+@media (min-width:860px){
+ body.wk .slide .card{grid-template-columns:minmax(280px,.9fr) minmax(360px,1.1fr);align-items:start}
+}
+@media (min-width:1024px){
+ body.wk main{padding-top:16px;padding-bottom:14px}
+ body.wk .slide .card{max-width:100%;padding:22px 26px}
+ body.wk .slide .wl{padding-right:4px}
+}
+@media (max-height:620px) and (min-width:700px){
+ body.wk .slide .exw{margin-top:8px;padding:4px}
+ body.wk .slide .exw .exi{height:clamp(130px,26vh,190px)}
+ body.wk .slide .card{padding:12px 16px}
+}
+@media (prefers-reduced-motion:reduce){body.wk .slide .card{scroll-behavior:auto}}
+
+/* ===== Original style block 6 (line 710) id="profile-layout-v4" ===== */
+
+/* Profile & settings layout refinement — keeps existing controls and data flow intact. */
+.profile-shell{display:flex;flex-direction:column;gap:18px;min-width:0}
+.profile-overview{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(220px,.85fr);gap:14px;align-items:stretch}
+.profile-details{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.profile-overview>.card,.profile-details>.card{min-width:0;margin:0;height:100%;box-sizing:border-box}
+.profile-overview .card h2,.profile-details .card h2{margin-top:0}
+.profile-overview .card:first-child{display:flex;flex-direction:column;align-items:stretch}
+.profile-overview .card:first-child .btn{align-self:flex-start;margin-top:14px}
+.profile-overview .row,.profile-details .row{gap:12px;align-items:center}
+.profile-overview .row>span:last-child,.profile-details .row>span:last-child{text-align:right;overflow-wrap:anywhere}
+.profile-overview .bdg{grid-template-columns:repeat(auto-fit,minmax(68px,1fr));gap:9px}
+.profile-overview .thm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.profile-overview .th{min-width:0;justify-content:flex-start}
+.profile-details .gal{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.profile-details .profile-device-card{grid-column:1/-1;height:auto}
+.profile-details input,.profile-details select,.profile-details textarea{max-width:100%;box-sizing:border-box}
+.profile-details .f{display:flex;gap:9px;flex-wrap:wrap}
+.profile-details .f>*{min-width:0}
+@media(max-width:1050px){.profile-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-overview>.card:first-child{grid-column:1/-1}.profile-overview .thm{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:680px){.profile-shell{gap:12px}.profile-overview,.profile-details{grid-template-columns:minmax(0,1fr);gap:12px}.profile-overview>.card:first-child,.profile-details .profile-device-card{grid-column:auto}.profile-overview .thm{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-details .gal{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-overview>.card,.profile-details>.card{height:auto}.profile-overview .row,.profile-details .row{padding-block:9px}}
+@media(max-width:380px){.profile-overview .thm{grid-template-columns:1fr}.profile-details .gal{grid-template-columns:1fr}.profile-overview .bdg{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ===== Original style block 7 (line 733) id="design-system-v5" ===== */
+
+/* ===== Design system consistency — tahap 5 ===== */
+:root{
+  --bg:#080D17;--card:#111A2A;--navy:#17243A;--line:rgba(148,163,184,.16);
+  --ink:#F1F5FC;--mute:#94A3B8;--blue:#397BFF;--blue2:#78A9FF;
+  --surface-raised:#18243A;--radius-card:20px;--radius-control:13px;
+  --shadow-card:0 12px 30px rgba(0,0,0,.16);
+  --ease: cubic-bezier(.2,.75,.25,1);
+}
+html{background:var(--bg);scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at 50% -18%,rgba(47,123,255,.10),transparent 48%),var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+main{width:100%;min-width:0}
+#app,.pgv,main>*{min-width:0}
+.card,.stat{border:1px solid var(--line);box-shadow:var(--shadow-card)}
+.card{border-radius:var(--radius-card);padding:clamp(15px,2vw,20px);}
+.card h2{line-height:1.12;letter-spacing:.015em}
+.hero{background:linear-gradient(145deg,rgba(54,111,221,.18),rgba(17,26,42,.96) 64%);border-color:rgba(100,157,255,.22)}
+.stat{background:linear-gradient(150deg,rgba(255,255,255,.035),transparent 70%),var(--card);border-radius:17px;padding:14px;min-width:0}
+.stat .num{font-variant-numeric:tabular-nums;letter-spacing:0}
+.sub,.mute,.prev,.empty{color:var(--mute)}
+.btn,.ok,.chip,.tab,button,select,input{touch-action:manipulation}
+.btn{border-radius:14px;letter-spacing:.02em;box-shadow:0 5px 14px rgba(47,123,255,.16);transition:transform .16s var(--ease),filter .16s var(--ease),box-shadow .16s var(--ease)}
+.btn.ghost{border:1px solid var(--line);box-shadow:none;background:var(--surface-raised)}
+.ok{border:1px solid var(--line);border-radius:12px;transition:background .16s,border-color .16s,transform .16s}
+.chip{border-color:var(--line);background:var(--surface-raised);transition:background .16s,border-color .16s,color .16s}
+.chip[aria-current=true]{box-shadow:0 4px 12px rgba(47,123,255,.18)}
+input,select,textarea{border:1px solid var(--line);border-radius:var(--radius-control);background:#121E32;color:var(--ink);min-width:0;max-width:100%;transition:border-color .16s,box-shadow .16s}
+input::placeholder,textarea::placeholder{color:#71819B;opacity:1}
+label{line-height:1.35}
+button:disabled{opacity:.48;cursor:not-allowed}
+:where(button,a,input,select,textarea,[tabindex]):focus-visible{outline:2px solid var(--blue2);outline-offset:3px}
+nav{background:rgba(10,16,28,.94);border-top:1px solid rgba(148,163,184,.18);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.tab{transition:color .16s,transform .16s}
+.tab[aria-current=page]{font-weight:700}
+.row{border-color:var(--line);align-items:center}
+svg{overflow:visible}
+img{max-width:100%}
+/* Keep dense data and forms from forcing horizontal overflow. */
+.grid,.gal,.cmp,.erow,.set{min-width:0}
+.grid{gap:10px}
+.set{gap:8px}
+@media(hover:hover){.btn:not(:disabled):hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 8px 18px rgba(47,123,255,.2)}.ok:not(:disabled):hover{border-color:rgba(120,169,255,.45)}.chip:hover{border-color:rgba(120,169,255,.5)}}
+@media(max-width:380px){
+  main{padding-left:12px;padding-right:12px}
+  .card{padding:14px;border-radius:17px}
+  .grid{gap:7px}
+  .stat{padding:10px;border-radius:14px}
+  .stat .num{font-size:clamp(25px,8vw,32px)}
+  .set{grid-template-columns:22px minmax(0,1fr) minmax(0,1fr) 72px;gap:5px}
+  .set input{font-size:18px;padding:10px 3px}
+  .set .ok{font-size:16px}
+}
+@media(min-width:700px){
+  body{padding-bottom:36px}
+  .card{margin-top:0}
+  .hero{min-height:100%}
+  nav{box-shadow:0 -8px 28px rgba(0,0,0,.18)}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
+
+
+/* ===== Original style block 8 (line 797) id="responsive-device-refinement-v7" ===== */
+
+/* ===== Tahap 7: responsive refinement — phone, tablet, laptop ===== */
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+*,*::before,*::after{box-sizing:border-box}
+img,svg,canvas,video{max-width:100%}
+main,#app,.pgv,.card,.hero,.row,.f,.grid,.gal,.cmp,.set,.sheet{min-width:0}
+
+/* Phone: 320–599px — one clear column, comfortable touch targets */
+@media (max-width:599px){
+  body{padding-left:0!important;padding-right:0!important;padding-bottom:calc(78px + env(safe-area-inset-bottom,0px))!important}
+  main{width:100%;max-width:100%;padding:14px 14px calc(92px + env(safe-area-inset-bottom,0px));margin:0}
+  body:not(.wk) #app,.pgv{display:flex;flex-direction:column;gap:13px;width:100%;min-width:0}
+  body:not(.wk) #app>*,.pgv>*{width:100%;max-width:100%;min-width:0;margin-top:0}
+  h1{font-size:clamp(30px,8vw,42px);line-height:1.04;overflow-wrap:anywhere}
+  h2{font-size:clamp(17px,4.8vw,21px)}
+  .card,.dashboard-view>.card,.dashboard-view .dashboard-card,.pgv>section.card{padding:15px;border-radius:17px}
+  .card.hero{display:flex;flex-wrap:wrap;gap:9px;padding:17px;min-height:0}
+  .card.hero>.btn{width:100%;max-width:none;flex:1 1 100%;min-height:46px;margin:3px 0 0}
+  .dashboard-stats,.pgv>.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+  .dashboard-stats .stat,.pgv>.grid .stat{min-width:0;padding:10px 8px;min-height:88px}
+  .dashboard-stats .num,.pgv>.grid .num{font-size:clamp(21px,6.5vw,29px);overflow-wrap:anywhere}
+  .dashboard-stats small,.pgv>.grid small{font-size:10px;line-height:1.25}
+  .dashboard-lower{grid-template-columns:minmax(0,1fr);gap:10px}
+  .profile-overview,.profile-details{grid-template-columns:minmax(0,1fr);gap:11px}
+  .profile-overview>.card:first-child,.profile-details .profile-device-card{grid-column:auto}
+  .profile-overview .thm{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .profile-details .gal{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pgv>.chips,.chips{max-width:100%;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+  .pgv>.chips::-webkit-scrollbar,.chips::-webkit-scrollbar{display:none}
+  .pgv>.chips .chip,.chips .chip{flex:0 0 auto;min-height:40px}
+  .dpick{max-width:100%;overflow-x:auto}
+  .f{gap:8px;flex-wrap:wrap}
+  .f>*{min-width:0;max-width:100%}
+  input,select,textarea{font-size:16px;min-height:44px}
+  button,.btn,.ok,.tab{min-height:42px}
+  .sheetbg{align-items:flex-end;padding:0}
+  .sheet,.sheet.xs{width:100%;max-width:100%;max-height:90dvh;border-radius:22px 22px 0 0;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  .grab{display:block}
+  nav{left:0;right:0;bottom:0;top:auto;width:100%;max-width:100%;padding:7px 8px calc(7px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-around;gap:3px;overflow-x:auto}
+  nav .tab{flex:1 1 0;min-width:0;min-height:54px;padding:5px 2px;gap:3px;font-size:10px;white-space:normal}
+  nav .tab svg{width:21px;height:21px;flex:none}
+  .toast,.prpop{left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom,0px));max-width:none}
+  body .rest{left:12px;right:12px;bottom:calc(74px + env(safe-area-inset-bottom,0px));max-width:none}
+}
+
+/* Small phones: avoid squeezed stat cards and workout set controls */
+@media (max-width:379px){
+  main{padding-left:11px;padding-right:11px}
+  .dashboard-stats .stat,.pgv>.grid .stat{padding:9px 6px;min-height:82px}
+  .dashboard-stats small,.pgv>.grid small{font-size:9px}
+  .profile-overview .thm{grid-template-columns:minmax(0,1fr)}
+  body.wk .slide .card{padding:11px}
+  body.wk .slide .set.sh,body.wk .slide .set.set{grid-template-columns:30px minmax(0,1fr) minmax(0,1fr) 76px;gap:4px}
+  body.wk .slide .set.set input{font-size:17px}
+  body.wk .slide .set.set .ok{font-size:14px}
+  nav .tab{font-size:9px}
+}
+
+/* Tablet portrait: 600–1023px — balanced two-column dashboard, centered content */
+@media (min-width:600px) and (max-width:1023px) and (orientation:portrait){
+  body{padding-left:0!important;padding-bottom:calc(82px + env(safe-area-inset-bottom,0px))!important}
+  main{width:100%;max-width:900px;padding:24px 24px calc(104px + env(safe-area-inset-bottom,0px));margin:0 auto}
+  body:not(.wk) #app{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+  body:not(.wk) #app>*{min-width:0}
+  body:not(.wk) #app>h1,body:not(.wk) #app>h1+.sub,body:not(.wk) #app>.chips,body:not(.wk) #app>.week,body:not(.wk) #app>.dpick,body:not(.wk) #app>.startdock,body:not(.wk) #app>.grid{grid-column:1/-1}
+  body:not(.wk) #app>section.card{grid-column:span 1}
+  body:not(.wk) #app>.card.hero{grid-column:1/-1}
+  .pgv{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+  .pgv>h1,.pgv>.chips,.pgv>.grid{grid-column:1/-1}
+  .pgv>section.card:first-of-type{grid-column:1/-1}
+  .profile-overview{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .profile-overview>.card:first-child{grid-column:1/-1}
+  .profile-details{grid-template-columns:repeat(2,minmax(0,1fr))}
+  nav{left:0;right:0;bottom:0;top:auto;width:100%;padding:8px 7vw calc(8px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:10px}
+  nav .tab{flex:0 1 110px;min-width:72px;min-height:58px}
+  .sheetbg{padding:18px}
+  .sheet{width:min(640px,100%);max-height:90dvh}
+}
+
+/* Tablet landscape and compact laptops: 600–1279px wide landscape */
+@media (min-width:600px) and (max-width:1279px) and (orientation:landscape){
+  main{width:100%;max-width:1100px;padding:20px 26px 42px;margin:0 auto}
+  body:not(.wk) #app{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  body:not(.wk) #app>h1,body:not(.wk) #app>h1+.sub,body:not(.wk) #app>.chips,body:not(.wk) #app>.week,body:not(.wk) #app>.dpick,body:not(.wk) #app>.startdock,body:not(.wk) #app>.grid{grid-column:1/-1}
+  body:not(.wk) #app>.card.hero{grid-column:1/-1}
+  .pgv{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .pgv>h1,.pgv>.chips,.pgv>.grid{grid-column:1/-1}
+  .pgv>section.card:first-of-type{grid-column:1/-1}
+  body.wk .slide .card{grid-template-columns:minmax(230px,.85fr) minmax(300px,1.15fr);gap:20px}
+}
+
+/* Laptop / desktop: sidebar layout with controlled content width */
+@media (min-width:1024px){
+  main{width:100%;max-width:1240px;margin:0 auto;padding-top:26px;padding-bottom:52px}
+  body:not(.wk) #app{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  body:not(.wk) #app>h1,body:not(.wk) #app>h1+.sub,body:not(.wk) #app>.chips,body:not(.wk) #app>.week,body:not(.wk) #app>.dpick,body:not(.wk) #app>.startdock,body:not(.wk) #app>.grid{grid-column:1/-1}
+  body:not(.wk) #app>.card.hero{grid-column:1/-1}
+  .pgv{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  .pgv>h1,.pgv>.chips,.pgv>.grid{grid-column:1/-1}
+  .pgv>section.card:first-of-type{grid-column:span 1}
+  .profile-overview{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(210px,.85fr)}
+  .profile-details{grid-template-columns:repeat(2,minmax(0,1fr))}
+  nav .tab{white-space:normal}
+}
+
+@media (min-width:1440px){
+  main{max-width:1380px}
+  body:not(.wk) #app{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  body:not(.wk) #app>h1,body:not(.wk) #app>h1+.sub,body:not(.wk) #app>.chips,body:not(.wk) #app>.week,body:not(.wk) #app>.dpick,body:not(.wk) #app>.startdock,body:not(.wk) #app>.grid{grid-column:1/-1}
+  body:not(.wk) #app>.card.hero{grid-column:span 2}
+  .pgv{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  .pgv>h1,.pgv>.chips,.pgv>.grid{grid-column:1/-1}
+  .pgv>section.card:first-of-type{grid-column:span 1}
+}
+
+/* Active workout: maintain usable two-column form only when there is enough width */
+@media (min-width:700px) and (max-width:859px){
+  body.wk .slide .card{display:block}
+  body.wk .slide .wl,body.wk .slide .wr{display:block;min-width:0}
+  body.wk .slide .exw{max-width:100%}
+  body.wk .slide .exw .exi{width:100%;height:clamp(180px,28vh,260px);object-fit:contain}
+}
+@media (max-width:699px){
+  body.wk main{height:auto;min-height:100dvh;padding-top:10px;padding-bottom:20px}
+  body.wk .slide .card{display:block}
+  body.wk .slide .wl,body.wk .slide .wr{display:block;min-width:0}
+  body.wk .slide .exw{max-width:100%}
+  body.wk .slide .exw .exi{width:100%;height:clamp(160px,32vh,250px);object-fit:contain}
+}
+

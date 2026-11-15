@@ -1,0 +1,1030 @@
+/* Athletic Physique — Final page-specific refinements */
+
+/* ===== Original style block 35 (line 3797) id="home-layout-v45" ===== */
+
+/* v45 — Home layout correction: balanced desktop canvas, no phantom column, quieter empty states */
+.homev{
+  width:100%!important;
+  max-width:1320px!important;
+  margin:0 auto!important;
+  gap:22px!important;
+}
+.homev .home-section{gap:10px!important;min-width:0!important}
+.homev .home-section-title{padding:0 2px!important;align-items:flex-end!important}
+.homev .home-section-title h2{
+  font-family:var(--v41-display)!important;
+  font-size:19px!important;
+  line-height:1.1!important;
+  letter-spacing:-.01em!important;
+  margin:0!important;
+}
+.homev .home-section-title p{
+  font-size:12px!important;
+  line-height:1.35!important;
+  color:#7f8aa3!important;
+  margin:3px 0 0!important;
+}
+.homev .dashboard-head{padding:2px 2px 0!important}
+.homev .dashboard-head h1{
+  font-size:38px!important;
+  line-height:1!important;
+  letter-spacing:-.025em!important;
+  margin:2px 0 5px!important;
+}
+.homev .dashboard-eyebrow{font-size:10px!important;letter-spacing:.18em!important;margin-bottom:8px!important}
+.homev .dashboard-head .sub{font-size:13px!important;color:#8793ab!important}
+
+/* Main hero */
+.homev .home-primary{gap:10px!important}
+.homev .home-primary .dashboard-hero{
+  width:100%!important;
+  min-height:194px!important;
+  padding:27px 30px!important;
+  border-radius:22px!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.16)!important;
+  display:flex!important;
+  align-items:center!important;
+}
+.homev .dashboard-hero-copy{width:100%!important;max-width:none!important}
+.homev .dashboard-hero .day{font-size:33px!important;line-height:1!important;margin:2px 0 6px!important}
+.homev .dashboard-hero .sub{font-size:14px!important;margin:0 0 17px!important}
+.homev .dashboard-plan-actions{
+  justify-content:flex-start!important;
+  max-width:760px!important;
+  margin:16px 0 0!important;
+}
+.homev .dashboard-plan-actions>.btn{
+  flex:0 1 350px!important;
+  min-height:48px!important;
+}
+
+/* Active workout */
+.homev .home-primary .dashboard-active-card{
+  min-height:148px!important;
+  padding:23px 25px!important;
+  border-radius:22px!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.16)!important;
+}
+.homev .dashboard-active-head h2{font-size:24px!important;line-height:1.05!important}
+.homev .dashboard-active-head .num{font-size:28px!important}
+.homev .dashboard-active-progress{max-width:720px!important}
+.homev .dashboard-active-card .btn{max-width:260px!important;margin-top:15px!important}
+
+/* Weekly metrics: use the full row when there is no coach card */
+.homev .home-weekly-grid{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr)!important;
+  gap:16px!important;
+  align-items:stretch!important;
+}
+.homev .home-weekly-grid>.card:first-child{
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.homev .home-weekly-stats{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:10px!important;
+  height:100%!important;
+}
+.homev .home-weekly-stats .stat{
+  min-height:104px!important;
+  padding:15px!important;
+  border-radius:17px!important;
+  justify-content:center!important;
+  align-items:center!important;
+  text-align:center!important;
+  background:linear-gradient(145deg,rgba(24,36,56,.96),rgba(15,23,38,.96))!important;
+  border:1px solid rgba(148,163,184,.12)!important;
+}
+.homev .home-weekly-stats .num{
+  display:block!important;
+  width:100%!important;
+  font-size:29px!important;
+  line-height:1!important;
+  letter-spacing:-.04em!important;
+  text-align:center!important;
+}
+.homev .home-weekly-stats small{
+  display:block!important;
+  width:100%!important;
+  margin-top:6px!important;
+  font-size:11px!important;
+  text-align:center!important;
+  color:#8f9bb1!important;
+}
+.homev .home-coach{border-radius:19px!important;padding:18px!important}
+.homev .home-coach-body{display:flex!important;flex-direction:column!important;justify-content:center!important}
+
+/* If coach markup is absent, eliminate the unused second grid track completely. */
+.homev .home-weekly-grid:not(:has(.home-coach)){
+  grid-template-columns:1fr!important;
+}
+.homev .home-weekly-grid:not(:has(.home-coach))>.card:first-child{width:100%!important}
+
+/* Recent activity: compact empty state, normal list when populated */
+.homev .home-recent .card{
+  padding:14px 20px!important;
+  border-radius:18px!important;
+  min-height:0!important;
+}
+.homev .home-recent .card:has(.empty){
+  min-height:112px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+.homev .home-recent .empty{margin:0!important;text-align:center!important}
+.homev .home-recent .row{min-height:44px!important;padding:7px 0!important}
+.homev .home-recent .row+.row{border-top:1px solid rgba(148,163,184,.09)!important}
+
+/* Lower cards: keep their left edge and internal hierarchy consistent */
+.homev .dashboard-card{border-radius:18px!important}
+.homev .dashboard-weight{font-size:30px!important;line-height:1!important;margin:2px 0 3px!important}
+
+/* Desktop: use the available canvas instead of leaving a large dead zone */
+@media(min-width:1024px){
+  main#app{max-width:1500px!important}
+  .homev{max-width:1320px!important}
+  .homev .home-primary .dashboard-active-card{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(320px,.55fr)!important;
+    column-gap:28px!important;
+    align-items:center!important;
+  }
+  .homev .dashboard-active-card .dashboard-active-progress{
+    grid-column:2!important;
+    grid-row:1 / span 2!important;
+    align-self:center!important;
+  }
+  .homev .dashboard-active-card .btn{grid-column:1!important;grid-row:2!important}
+}
+
+/* Laptop: keep the wider canvas but avoid cramped metrics */
+@media(min-width:700px) and (max-width:1279px){
+  .homev{max-width:100%!important}
+  .homev .home-weekly-grid{grid-template-columns:1fr!important}
+  .homev .home-weekly-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .homev .home-weekly-stats .stat{min-height:96px!important}
+}
+
+/* Mobile */
+@media(max-width:699px){
+  .homev{max-width:none!important;gap:20px!important}
+  .homev .home-section{gap:9px!important}
+  .homev .home-section-title h2{font-size:18px!important}
+  .homev .home-section-title p{font-size:11.5px!important}
+  .homev .dashboard-head h1{font-size:31px!important}
+  .homev .home-primary .dashboard-hero{min-height:176px!important;padding:20px 17px!important;border-radius:19px!important}
+  .homev .dashboard-hero .day{font-size:28px!important}
+  .homev .dashboard-plan-actions{flex-direction:column!important;align-items:stretch!important;max-width:none!important;margin-top:12px!important}
+  .homev .dashboard-plan-actions>.btn{flex:1 1 auto!important;width:100%!important;max-width:none!important}
+  .homev .home-primary .dashboard-active-card{min-height:0!important;padding:17px!important;border-radius:19px!important}
+  .homev .dashboard-active-head h2{font-size:21px!important}
+  .homev .dashboard-active-head .num{font-size:24px!important}
+  .homev .dashboard-active-card .btn{max-width:none!important}
+  .homev .home-weekly-grid{grid-template-columns:1fr!important;gap:10px!important}
+  .homev .home-weekly-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  .homev .home-weekly-stats .stat{min-height:82px!important;padding:12px!important}
+  .homev .home-weekly-stats .num{font-size:25px!important}
+  .homev .home-coach{min-height:0!important}
+  .homev .home-recent .card:has(.empty){min-height:100px!important}
+}
+
+/* ===== Original style block 36 (line 3991) id="active-workout-balance-v47" ===== */
+
+/* v47 — Active workout: balanced two-column composition with an isolated progress panel */
+@media(min-width:1024px){
+  .homev .dashboard-active-card{
+    display:grid!important;
+    grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr)!important;
+    column-gap:48px!important;
+    align-items:center!important;
+    min-height:154px!important;
+    padding:24px 25px!important;
+  }
+  .homev .dashboard-active-main{
+    min-width:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    justify-content:center!important;
+  }
+  .homev .dashboard-active-main .btn{
+    width:min(260px,100%)!important;
+    margin-top:14px!important;
+    align-self:flex-start!important;
+  }
+  .homev .dashboard-active-progress{
+    min-width:0!important;
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    align-self:center!important;
+  }
+  .homev .dashboard-active-progress-head{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    min-height:30px!important;
+    margin-bottom:8px!important;
+  }
+  .homev .dashboard-active-percent{
+    display:block!important;
+    font-size:28px!important;
+    line-height:1!important;
+    font-weight:800!important;
+    color:#8dbbff!important;
+    letter-spacing:-.02em!important;
+  }
+  .homev .dashboard-active-bar{
+    width:100%!important;
+    height:8px!important;
+  }
+  .homev .dashboard-active-meta{
+    margin-top:8px!important;
+  }
+}
+@media(min-width:700px) and (max-width:1023px){
+  .homev .dashboard-active-card{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(260px,.7fr)!important;
+    column-gap:28px!important;
+    align-items:center!important;
+  }
+  .homev .dashboard-active-main{min-width:0!important}
+  .homev .dashboard-active-main .btn{margin-top:13px!important}
+  .homev .dashboard-active-progress{min-width:0!important;width:100%!important;margin:0!important}
+  .homev .dashboard-active-progress-head{display:flex!important;align-items:center!important;min-height:28px!important;margin-bottom:7px!important}
+  .homev .dashboard-active-percent{font-size:26px!important;line-height:1!important;color:#8dbbff!important;font-weight:800!important}
+}
+@media(max-width:699px){
+  .homev .dashboard-active-card{display:flex!important;flex-direction:column!important;gap:16px!important}
+  .homev .dashboard-active-main{width:100%!important}
+  .homev .dashboard-active-main .btn{width:100%!important;margin-top:14px!important}
+  .homev .dashboard-active-progress{width:100%!important;margin:0!important}
+  .homev .dashboard-active-progress-head{display:flex!important;align-items:center!important;min-height:26px!important;margin-bottom:7px!important}
+  .homev .dashboard-active-percent{font-size:25px!important;line-height:1!important;color:#8dbbff!important;font-weight:800!important}
+}
+
+/* ===== Original style block 37 (line 4068) id="workout-header-left-v48" ===== */
+
+/* v48 — Workout header and exercise controls: left-aligned identity, balanced actions */
+@media(min-width:1024px){
+  body.wk .wk-session-head{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:start!important;
+    justify-content:stretch!important;
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:7px 2px 5px!important;
+    gap:28px!important;
+  }
+  body.wk .wk-session-title{
+    min-width:0!important;
+    width:100%!important;
+    justify-self:start!important;
+    text-align:left!important;
+  }
+  body.wk .wk-session-title h1{
+    text-align:left!important;
+    margin-left:0!important;
+  }
+  body.wk .wk-session-progress{
+    justify-self:end!important;
+    align-self:start!important;
+    min-width:92px!important;
+    text-align:right!important;
+  }
+  body.wk .wk-exercise-card .hd{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto auto!important;
+    align-items:center!important;
+    justify-content:initial!important;
+    gap:10px!important;
+  }
+  body.wk .wk-exercise-card .hd h2{
+    min-width:0!important;
+    margin:0!important;
+    text-align:left!important;
+    justify-self:start!important;
+  }
+  body.wk .wk-exercise-card .hd .wk-mode-pill{
+    justify-self:end!important;
+  }
+  body.wk .wk-exercise-card .hd .pl{
+    justify-self:end!important;
+    min-width:68px!important;
+    min-height:38px!important;
+    margin:0!important;
+    padding:7px 13px!important;
+    line-height:1!important;
+  }
+}
+@media(min-width:700px) and (max-width:1023px){
+  body.wk .wk-session-head{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:start!important;
+    gap:20px!important;
+  }
+  body.wk .wk-session-title{text-align:left!important;justify-self:start!important;width:100%!important}
+  body.wk .wk-session-title h1{text-align:left!important}
+  body.wk .wk-exercise-card .hd{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto auto!important;
+    align-items:center!important;
+    gap:8px!important;
+  }
+  body.wk .wk-exercise-card .hd h2{text-align:left!important}
+  body.wk .wk-exercise-card .hd .pl{min-width:64px!important;margin:0!important}
+}
+@media(max-width:699px){
+  body.wk .wk-session-title{text-align:left!important}
+  body.wk .wk-session-title h1{text-align:left!important}
+  body.wk .wk-exercise-card .hd{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto auto!important;
+    align-items:center!important;
+    gap:7px!important;
+  }
+  body.wk .wk-exercise-card .hd h2{
+    min-width:0!important;
+    text-align:left!important;
+    font-size:clamp(21px,7vw,28px)!important;
+  }
+  body.wk .wk-exercise-card .hd .pl{
+    min-width:58px!important;
+    min-height:38px!important;
+    margin:0!important;
+    padding:6px 10px!important;
+  }
+}
+
+/* ===== Original style block 38 (line 4164) id="workout-timer-polish-v49" ===== */
+
+/* v49 — workout timing + control polish */
+body.wk .wk-session-head{min-width:0!important}
+body.wk .wk-session-title{min-width:0!important}
+body.wk .wk-session-info{display:flex!important;align-items:center!important;flex-wrap:wrap!important}
+body.wk .wk-elapsed{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  min-height:32px!important;
+  padding:5px 10px!important;
+  border:1px solid rgba(148,163,184,.20)!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.045)!important;
+  color:var(--ink)!important;
+  white-space:nowrap!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+body.wk .wk-elapsed span{
+  font-size:10px!important;
+  line-height:1!important;
+  letter-spacing:.08em!important;
+  text-transform:uppercase!important;
+  color:var(--mute)!important;
+}
+body.wk .wk-elapsed b{
+  display:block!important;
+  font-family:var(--font-display,"Barlow Condensed",sans-serif)!important;
+  font-size:16px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  color:var(--ink)!important;
+  font-variant-numeric:tabular-nums!important;
+}
+
+/* Plate control: true centered pill, no baseline drift */
+body.wk .wk-exercise-card .hd .pl{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  align-self:center!important;
+  justify-self:end!important;
+  box-sizing:border-box!important;
+  width:62px!important;
+  min-width:62px!important;
+  height:38px!important;
+  min-height:38px!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:999px!important;
+  line-height:1!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  font-family:var(--font-display,"Barlow Condensed",sans-serif)!important;
+  font-size:15px!important;
+  font-weight:700!important;
+}
+
+/* Time-set timer: same dark control language as the rest of Workout */
+body.wk .set.mode-time .time-timer{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  align-self:stretch!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:48px!important;
+  height:48px!important;
+  padding:5px 8px!important;
+  margin:0!important;
+  border:1px solid rgba(148,163,184,.18)!important;
+  border-radius:12px!important;
+  background:#111a2b!important;
+  color:var(--ink)!important;
+  box-shadow:none!important;
+  line-height:1!important;
+  font-family:var(--font)!important;
+  cursor:pointer!important;
+}
+body.wk .set.mode-time .time-timer span{
+  display:block!important;
+  font-family:var(--font-display,"Barlow Condensed",sans-serif)!important;
+  font-size:17px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  color:var(--ink)!important;
+  font-variant-numeric:tabular-nums!important;
+}
+body.wk .set.mode-time .time-timer small{
+  display:block!important;
+  margin-top:3px!important;
+  font-family:var(--font)!important;
+  font-size:9px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  letter-spacing:.04em!important;
+  color:var(--mute)!important;
+  text-transform:uppercase!important;
+}
+body.wk .set.mode-time .time-timer.running{
+  border-color:rgba(var(--a2r),.55)!important;
+  background:linear-gradient(135deg,rgba(var(--a1r),.18),rgba(var(--a2r),.10))!important;
+}
+body.wk .set.mode-time .time-timer.running span{color:var(--b2)!important}
+body.wk .set.mode-time .time-timer.running small{color:var(--a2)!important}
+body.wk .set.mode-time .time-timer:hover{filter:brightness(1.08)!important}
+
+@media(max-width:699px){
+  body.wk .wk-elapsed{min-height:30px!important;padding:5px 8px!important;gap:5px!important}
+  body.wk .wk-elapsed b{font-size:15px!important}
+  body.wk .wk-exercise-card .hd .pl{width:58px!important;min-width:58px!important;height:36px!important;min-height:36px!important;font-size:14px!important}
+  body.wk .set.mode-time .time-timer{min-height:46px!important;height:46px!important;padding:4px 6px!important}
+  body.wk .set.mode-time .time-timer span{font-size:16px!important}
+}
+
+/* ===== Original style block 39 (line 4284) id="workout-phone-time-v51" ===== */
+
+/* v51: time-mode mobile composition + countdown timer. */
+body.wk .set.mode-time,body.wk .wk-set-head.time{
+  align-items:center!important;
+}
+body.wk .set.mode-time .time-timer{
+  overflow:hidden!important;
+  white-space:nowrap!important;
+}
+@media(max-width:699px){
+  body.wk .slide .wk-data-head{margin-bottom:5px!important}
+  body.wk .slide .wk-history-line{min-height:18px!important;margin-bottom:2px!important}
+  body.wk .wk-set-head.time,body.wk .set.mode-time{
+    grid-template-columns:22px minmax(0,1fr) minmax(92px,1fr) 68px!important;
+    gap:5px!important;
+  }
+  body.wk .wk-set-head.time{font-size:9px!important}
+  body.wk .wk-set-head.time span:nth-child(2),body.wk .wk-set-head.time span:nth-child(3){text-align:center!important}
+  body.wk .set.mode-time input{
+    min-height:48px!important;
+    height:48px!important;
+    padding:8px 6px!important;
+    font-size:17px!important;
+  }
+  body.wk .set.mode-time .time-timer{
+    height:48px!important;
+    min-height:48px!important;
+    padding:4px 5px!important;
+  }
+  body.wk .set.mode-time .time-timer span{font-size:16px!important}
+  body.wk .set.mode-time .time-timer small{font-size:8px!important;margin-top:3px!important}
+  body.wk .set.mode-time .ok{
+    min-height:48px!important;
+    height:48px!important;
+    padding:0 5px!important;
+    font-size:15px!important;
+  }
+  body.wk .set.mode-time.active .time-timer{box-shadow:0 0 0 2px rgba(var(--a2r),.12)!important}
+  body.wk .set.mode-time.done .time-timer{border-color:rgba(52,211,153,.35)!important}
+}
+@media(max-width:379px){
+  body.wk .wk-set-head.time,body.wk .set.mode-time{
+    grid-template-columns:21px minmax(0,1fr) minmax(84px,1fr) 64px!important;
+    gap:4px!important;
+  }
+  body.wk .set.mode-time input{font-size:16px!important}
+  body.wk .set.mode-time .time-timer{padding:3px 4px!important}
+  body.wk .set.mode-time .time-timer span{font-size:15px!important}
+  body.wk .set.mode-time .ok{font-size:14px!important}
+}
+
+/* ===== Original style block 40 (line 4336) id="workout-time-mobile-v52" ===== */
+
+/* v52: time mode uses one timer control; duration input removed. */
+body.wk .wk-set-head.time,
+body.wk .set.mode-time{grid-template-columns:34px minmax(0,1fr) 104px!important;}
+body.wk .wk-set-head.time span:nth-child(2){text-align:center!important}
+body.wk .set.mode-time .time-timer{grid-column:2!important;width:100%!important;}
+body.wk .set.mode-time .ok{grid-column:3!important;}
+body.wk .set.mode-time .timer-adjust{grid-column:1 / -1!important;}
+body.wk .timer-adjust{margin-top:6px!important;}
+body.wk .timer-adjust .seg{max-width:220px!important;margin:0 auto!important;}
+body.wk .timer-adjust .seg span{min-width:76px!important;text-align:center!important;font-variant-numeric:tabular-nums!important;}
+body.wk .timer-adjust .seg span small{display:block!important;font-size:8px!important;color:var(--mute)!important;text-transform:uppercase!important;letter-spacing:.05em!important;line-height:1!important;margin-top:2px!important;}
+@media(max-width:699px){
+  body.wk .wk-set-head.time,
+  body.wk .set.mode-time{grid-template-columns:22px minmax(0,1fr) 68px!important;gap:5px!important;}
+  body.wk .set.mode-time .time-timer{height:48px!important;min-height:48px!important;}
+  body.wk .set.mode-time .ok{height:48px!important;min-height:48px!important;}
+  body.wk .timer-adjust{grid-column:1 / -1!important;margin:6px 0 0!important;}
+  body.wk .timer-adjust .seg{max-width:190px!important;height:40px!important;}
+  body.wk .timer-adjust .seg span{min-width:72px!important;font-size:12px!important;}
+}
+@media(max-width:379px){
+  body.wk .wk-set-head.time,
+  body.wk .set.mode-time{grid-template-columns:21px minmax(0,1fr) 64px!important;gap:4px!important;}
+  body.wk .set.mode-time .time-timer{padding:3px 4px!important;}
+  body.wk .set.mode-time .ok{font-size:14px!important;}
+  body.wk .timer-adjust .seg{max-width:180px!important;}
+}
+
+/* ===== Original style block 41 (line 4366) id="workout-mobile-grid-v53" ===== */
+
+/* v53: identical set-number column and control alignment across workout modes. */
+@media(max-width:699px){
+  body.wk .wk-set-head.weight,body.wk .set.mode-weight{grid-template-columns:38px minmax(0,1fr) minmax(0,1fr) 72px!important;gap:5px!important;}
+  body.wk .wk-set-head.bodyweight,body.wk .set.mode-bodyweight{grid-template-columns:38px minmax(0,1fr) 72px!important;gap:5px!important;}
+  body.wk .wk-set-head.time,body.wk .set.mode-time{grid-template-columns:38px minmax(0,1fr) 72px!important;gap:5px!important;}
+  body.wk .set.mode-weight .wb,body.wk .set.mode-bodyweight .wb,body.wk .set.mode-time .wb{width:100%!important;min-width:0!important;height:48px!important;min-height:48px!important;margin:0!important;}
+  body.wk .set.mode-weight input,body.wk .set.mode-bodyweight input,body.wk .set.mode-time .time-timer{height:48px!important;min-height:48px!important;}
+  body.wk .set.mode-weight .ok,body.wk .set.mode-bodyweight .ok,body.wk .set.mode-time .ok{height:48px!important;min-height:48px!important;}
+  body.wk .set.mode-weight .rpe,body.wk .set.mode-bodyweight .rpe{padding-left:43px!important;}
+  body.wk .set.mode-weight .adj2,body.wk .set.mode-bodyweight .adj2{margin-left:43px!important;}
+}
+@media(max-width:379px){
+  body.wk .wk-set-head.weight,body.wk .set.mode-weight{grid-template-columns:34px minmax(0,1fr) minmax(0,1fr) 64px!important;gap:4px!important;}
+  body.wk .wk-set-head.bodyweight,body.wk .set.mode-bodyweight{grid-template-columns:34px minmax(0,1fr) 64px!important;gap:4px!important;}
+  body.wk .wk-set-head.time,body.wk .set.mode-time{grid-template-columns:34px minmax(0,1fr) 64px!important;gap:4px!important;}
+  body.wk .set.mode-weight .wb,body.wk .set.mode-bodyweight .wb,body.wk .set.mode-time .wb{height:46px!important;min-height:46px!important;}
+  body.wk .set.mode-weight input,body.wk .set.mode-bodyweight input,body.wk .set.mode-time .time-timer{height:46px!important;min-height:46px!important;}
+  body.wk .set.mode-weight .ok,body.wk .set.mode-bodyweight .ok,body.wk .set.mode-time .ok{height:46px!important;min-height:46px!important;}
+  body.wk .set.mode-weight .rpe,body.wk .set.mode-bodyweight .rpe{padding-left:39px!important;}
+  body.wk .set.mode-weight .adj2,body.wk .set.mode-bodyweight .adj2{margin-left:39px!important;}
+}
+
+/* ===== Original style block 42 (line 4390) id="workout-time-inline-v54" ===== */
+
+/* v54: timer adjustment stays on the same row as timer + Catat. */
+body.wk .set.mode-time{grid-template-columns:38px minmax(0,1fr) 112px 72px!important;gap:5px!important;align-items:center!important;}
+body.wk .set.mode-time .time-timer{grid-column:auto!important;width:100%!important;min-width:0!important;}
+body.wk .set.mode-time .timer-adjust{grid-column:auto!important;margin:0!important;min-width:0!important;width:100%!important;}
+body.wk .set.mode-time .timer-adjust .seg{width:100%!important;max-width:none!important;height:48px!important;margin:0!important;gap:0!important;padding:0 2px!important;}
+body.wk .set.mode-time .timer-adjust .seg span{min-width:42px!important;font-size:10px!important;line-height:1.05!important;}
+body.wk .set.mode-time .timer-adjust .seg span small{font-size:7px!important;margin-top:1px!important;}
+body.wk .set.mode-time .timer-adjust .st{width:30px!important;height:42px!important;min-height:42px!important;font-size:20px!important;}
+body.wk .set.mode-time .ok{grid-column:auto!important;height:48px!important;min-height:48px!important;width:100%!important;}
+body.wk .wk-set-head.time{grid-template-columns:38px minmax(0,1fr) 112px 72px!important;gap:5px!important;}
+body.wk .wk-set-head.time span:nth-child(3){text-align:center!important;}
+@media(max-width:699px){
+  body.wk .set.mode-time{grid-template-columns:34px minmax(0,1fr) 106px 68px!important;gap:4px!important;}
+  body.wk .wk-set-head.time{grid-template-columns:34px minmax(0,1fr) 106px 68px!important;gap:4px!important;}
+  body.wk .set.mode-time .time-timer,body.wk .set.mode-time .ok{height:46px!important;min-height:46px!important;}
+  body.wk .set.mode-time .timer-adjust .seg{height:46px!important;}
+  body.wk .set.mode-time .timer-adjust .st{width:28px!important;height:40px!important;min-height:40px!important;}
+}
+@media(max-width:379px){
+  body.wk .set.mode-time{grid-template-columns:32px minmax(0,1fr) 98px 62px!important;gap:3px!important;}
+  body.wk .wk-set-head.time{grid-template-columns:32px minmax(0,1fr) 98px 62px!important;gap:3px!important;}
+  body.wk .set.mode-time .timer-adjust .seg{padding:0 1px!important;}
+  body.wk .set.mode-time .timer-adjust .st{width:25px!important;}
+  body.wk .set.mode-time .timer-adjust .seg span{min-width:38px!important;font-size:9px!important;}
+  body.wk .set.mode-time .ok{font-size:13px!important;}
+}
+
+/* ===== Original style block 43 (line 4419) id="workout-mobile-spacing-v55" ===== */
+
+/* v55: refine mobile workout spacing for RPE and load/repetition controls. */
+@media (max-width:699px){
+  body.wk .set.mode-weight{grid-template-columns:38px minmax(0,1fr) minmax(0,1fr) 72px!important;gap:5px!important;}
+
+  /* RPE occupies exactly the two performance columns, centered under the inputs. */
+  body.wk .set.mode-weight + .rpe{
+    margin:7px 72px 0 38px!important;
+    padding:0!important;
+    display:grid!important;
+    grid-template-columns:34px repeat(6,minmax(0,1fr))!important;
+    gap:5px!important;
+    align-items:center!important;
+  }
+  body.wk .set.mode-weight + .rpe small{
+    width:auto!important;
+    text-align:left!important;
+    font-size:11px!important;
+    letter-spacing:.04em!important;
+  }
+  body.wk .set.mode-weight + .rpe button{
+    width:100%!important;
+    min-width:0!important;
+    min-height:34px!important;
+    height:34px!important;
+    padding:0!important;
+    border-radius:10px!important;
+    font-size:15px!important;
+  }
+  body.wk .set.mode-weight + .rpe .rpeq{
+    width:34px!important;
+    border-radius:10px!important;
+  }
+  body.wk .set.mode-weight + .rpe .rpec{
+    grid-column:1 / -1!important;
+    padding:0!important;
+    margin:0!important;
+    text-align:center!important;
+    font-size:11px!important;
+  }
+
+  /* Load / rep adjustment controls align to the same two performance columns. */
+  body.wk .set.mode-weight + .rpe + .adj2{
+    margin:8px 72px 2px 38px!important;
+    padding:0!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) 42px!important;
+    gap:7px!important;
+    align-items:center!important;
+  }
+  body.wk .set.mode-weight + .rpe + .adj2 .seg{
+    height:42px!important;
+    min-width:0!important;
+    border-radius:999px!important;
+    padding:0 2px!important;
+  }
+  body.wk .set.mode-weight + .rpe + .adj2 .seg span{
+    min-width:0!important;
+    flex:1 1 auto!important;
+    text-align:center!important;
+    font-size:11px!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+  body.wk .set.mode-weight + .rpe + .adj2 .st{
+    width:34px!important;
+    height:38px!important;
+    min-height:38px!important;
+    flex:0 0 34px!important;
+    font-size:19px!important;
+  }
+  body.wk .set.mode-weight + .rpe + .adj2 .st.cp{
+    width:42px!important;
+    height:42px!important;
+    min-height:42px!important;
+    border-radius:12px!important;
+  }
+
+  /* Keep the time-mode adjustment centered between timer and Catat. */
+  body.wk .set.mode-time .timer-adjust .seg{
+    justify-content:space-between!important;
+  }
+  body.wk .set.mode-time .timer-adjust .seg span{
+    flex:1 1 auto!important;
+    text-align:center!important;
+  }
+}
+
+@media (max-width:379px){
+  body.wk .set.mode-weight{grid-template-columns:34px minmax(0,1fr) minmax(0,1fr) 64px!important;gap:4px!important;}
+  body.wk .set.mode-weight + .rpe{
+    margin-left:34px!important;
+    margin-right:64px!important;
+    grid-template-columns:31px repeat(6,minmax(0,1fr))!important;
+    gap:4px!important;
+  }
+  body.wk .set.mode-weight + .rpe .rpeq{width:31px!important;}
+  body.wk .set.mode-weight + .rpe button{min-height:32px!important;height:32px!important;font-size:14px!important;}
+  body.wk .set.mode-weight + .rpe + .adj2{
+    margin-left:34px!important;
+    margin-right:64px!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) 38px!important;
+    gap:5px!important;
+  }
+  body.wk .set.mode-weight + .rpe + .adj2 .seg{height:40px!important;}
+  body.wk .set.mode-weight + .rpe + .adj2 .st{width:31px!important;flex-basis:31px!important;}
+  body.wk .set.mode-weight + .rpe + .adj2 .st.cp{width:38px!important;height:40px!important;min-height:40px!important;}
+}
+
+/* ===== Original style block 44 (line 4528) id="workout-time-mobile-polish-v56" ===== */
+
+/* v56: polish the time-mode mobile row so the timer adjustment is centered between timer and Catat. */
+@media (max-width:699px){
+  body.wk .wk-set-head.time{
+    grid-template-columns:38px minmax(0,1fr) 116px 72px!important;
+    gap:5px!important;
+    align-items:center!important;
+  }
+  body.wk .set.mode-time{
+    grid-template-columns:38px minmax(0,1fr) 116px 72px!important;
+    gap:5px!important;
+    align-items:center!important;
+  }
+  body.wk .set.mode-time .time-timer{
+    width:100%!important;
+    min-width:0!important;
+    height:48px!important;
+    min-height:48px!important;
+  }
+  body.wk .set.mode-time .timer-adjust{
+    width:100%!important;
+    min-width:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    margin:0!important;
+  }
+  body.wk .set.mode-time .timer-adjust .seg{
+    width:108px!important;
+    max-width:108px!important;
+    height:48px!important;
+    min-height:48px!important;
+    margin:0 auto!important;
+    padding:0 3px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    border-radius:14px!important;
+    gap:2px!important;
+  }
+  body.wk .set.mode-time .timer-adjust .seg span{
+    flex:1 1 auto!important;
+    min-width:0!important;
+    height:auto!important;
+    text-align:center!important;
+    font-size:10px!important;
+    line-height:1.05!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+  body.wk .set.mode-time .timer-adjust .seg span small{
+    display:block!important;
+    margin-top:2px!important;
+    font-size:7px!important;
+    line-height:1!important;
+    letter-spacing:.05em!important;
+  }
+  body.wk .set.mode-time .timer-adjust .st{
+    width:28px!important;
+    height:40px!important;
+    min-height:40px!important;
+    flex:0 0 28px!important;
+    border-radius:11px!important;
+    font-size:18px!important;
+    line-height:1!important;
+  }
+  body.wk .set.mode-time .ok{
+    width:100%!important;
+    min-width:0!important;
+    height:48px!important;
+    min-height:48px!important;
+  }
+  body.wk .wk-set-head.time span:nth-child(3){
+    text-align:center!important;
+  }
+}
+
+@media (max-width:379px){
+  body.wk .wk-set-head.time,
+  body.wk .set.mode-time{
+    grid-template-columns:34px minmax(0,1fr) 104px 64px!important;
+    gap:4px!important;
+  }
+  body.wk .set.mode-time .time-timer,
+  body.wk .set.mode-time .ok{
+    height:46px!important;
+    min-height:46px!important;
+  }
+  body.wk .set.mode-time .timer-adjust .seg{
+    width:96px!important;
+    max-width:96px!important;
+    height:46px!important;
+    min-height:46px!important;
+    padding:0 2px!important;
+  }
+  body.wk .set.mode-time .timer-adjust .st{
+    width:25px!important;
+    height:38px!important;
+    min-height:38px!important;
+    flex-basis:25px!important;
+    font-size:17px!important;
+  }
+  body.wk .set.mode-time .timer-adjust .seg span{
+    font-size:9px!important;
+  }
+}
+
+/* ===== Original style block 45 (line 4635) id="home-weekly-coach-v57" ===== */
+
+/* v57 — Home only: weekly metrics full-width, Weekly Coach below; preserve all other UI */
+.homev .home-weekly-grid{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:14px!important;
+  align-items:start!important;
+}
+.homev .home-weekly-grid>.card:first-child{
+  width:100%!important;
+}
+.homev .home-weekly-stats{
+  width:100%!important;
+  height:auto!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+.homev .home-weekly-stats .stat{
+  min-height:104px!important;
+  height:auto!important;
+}
+/* Remove the artificial outer card around Weekly Coach so its own card is the single visual surface. */
+.homev .home-coach{
+  width:100%!important;
+  min-height:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+}
+.homev .home-coach-body{
+  width:100%!important;
+  display:block!important;
+}
+.homev .weekly-coach-card{
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+}
+.homev .weekly-coach-head{
+  min-width:0!important;
+}
+.homev .weekly-coach-head>div{
+  min-width:0!important;
+}
+.homev .weekly-coach-badge{
+  flex:0 1 auto!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+@media(min-width:700px){
+  .homev .home-weekly-grid{gap:16px!important}
+  .homev .home-weekly-stats .stat{min-height:108px!important}
+}
+@media(max-width:699px){
+  .homev .home-weekly-grid{grid-template-columns:1fr!important;gap:10px!important}
+  .homev .home-weekly-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .homev .home-weekly-stats .stat{min-height:82px!important}
+  .homev .weekly-coach-card{border-radius:19px!important}
+  .homev .weekly-coach-head{gap:8px!important}
+  .homev .weekly-coach-badge{font-size:9px!important;padding:0 8px!important}
+}
+
+/* ===== Original style block 46 (line 4702) id="workout-start-time-v59" ===== */
+
+body.wk .wk-session-info .wk-started{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border:1px solid rgba(148,163,184,.16);border-radius:999px;background:rgba(255,255,255,.035);white-space:nowrap}
+body.wk .wk-session-info .wk-started span{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);font-weight:700}
+body.wk .wk-session-info .wk-started b{font-family:var(--font-display);font-size:15px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+@media(max-width:699px){
+ body.wk .wk-session-info .wk-started{padding:4px 7px;gap:5px}
+ body.wk .wk-session-info .wk-started span{font-size:9px}
+ body.wk .wk-session-info .wk-started b{font-size:14px}
+}
+
+/* ===== Original style block 47 (line 4713) id="progress-spacing-polish-v60" ===== */
+
+/* v60 — Progress: clean empty states, aligned chips, consistent spacing */
+.pgv .progress-physique > .card{
+  min-width:0!important;
+  overflow:hidden!important;
+}
+.pgv .progress-physique > .card > .hd{
+  align-items:center!important;
+  gap:14px!important;
+}
+.pgv .progress-physique > .card > .hd > .chip{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 auto!important;
+  min-height:34px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+  padding:0 13px!important;
+}
+.pgv .progress-physique .measurement-grid{
+  gap:12px!important;
+  margin-top:12px!important;
+}
+.pgv .progress-physique .measurement-grid .card-mini{
+  min-width:0!important;
+  margin:0!important;
+  padding:13px!important;
+  box-sizing:border-box!important;
+}
+.pgv .progress-physique > .card > .empty{
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+  margin:12px 0 0!important;
+  min-height:96px!important;
+  padding:16px 12px!important;
+  border:1px dashed rgba(148,163,184,.22)!important;
+  border-radius:13px!important;
+}
+.pgv .progress-body-grid > .card .empty{
+  width:100%!important;
+  max-width:none!important;
+  box-sizing:border-box!important;
+  margin:10px 0 0!important;
+}
+.pgv .progress-section .empty::before{
+  width:40px!important;
+  height:40px!important;
+}
+.pgv .progress-section .sub{
+  line-height:1.45!important;
+}
+@media(max-width:699px){
+  .pgv .progress-physique > .card > .hd{
+    gap:10px!important;
+  }
+  .pgv .progress-physique > .card > .hd > .chip{
+    min-height:32px!important;
+    padding:0 11px!important;
+    font-size:11px!important;
+  }
+  .pgv .progress-physique .measurement-grid{
+    gap:10px!important;
+  }
+  .pgv .progress-physique > .card > .empty{
+    margin-top:10px!important;
+    min-height:88px!important;
+  }
+}
+
+/* ===== Original style block 48 (line 4787) id="progress-dashed-alignment-v61" ===== */
+
+/* v61 — Progress: align all dashed empty-state boxes consistently */
+.pgv .progress-training-grid > .card{
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+.pgv .progress-training-grid > .card > .empty{
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  min-height:94px!important;
+  margin:10px 0 0!important;
+  padding:16px 12px!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:9px!important;
+  text-align:center!important;
+  border:1px dashed rgba(148,163,184,.22)!important;
+  border-radius:13px!important;
+}
+.pgv .progress-training-grid > .card > .empty::before{
+  width:40px!important;
+  height:40px!important;
+  margin:0!important;
+}
+@media(max-width:699px){
+  .pgv .progress-training-grid > .card > .empty{
+    min-height:88px!important;
+    margin-top:10px!important;
+    padding:14px 10px!important;
+  }
+  .pgv .progress-training-grid > .card > .empty::before{
+    width:36px!important;
+    height:36px!important;
+  }
+}

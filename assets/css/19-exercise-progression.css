@@ -1,0 +1,16 @@
+/* ATHLETIC PHYSIQUE — Stage 11 Exercise Progression */
+.ap-ex-progression{overflow:hidden}
+.ap-ex-table{display:grid;gap:8px;margin-top:14px}
+.ap-ex-row{display:grid;grid-template-columns:minmax(180px,1.4fr) minmax(120px,.8fr) minmax(90px,.55fr) minmax(100px,.65fr) minmax(230px,1.5fr);gap:12px;align-items:center;padding:13px 14px;border:1px solid var(--ap-border,rgba(148,163,184,.16));border-radius:12px;background:var(--ap-surface-2,rgba(255,255,255,.025))}
+.ap-ex-row>div{min-width:0}
+.ap-ex-name{display:grid;gap:3px}
+.ap-ex-name strong{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ap-ex-name small,.ap-ex-row small{color:var(--ap-muted,#94a3b8);font-size:11px;line-height:1.4}
+.ap-ex-label{display:block;color:var(--ap-muted,#94a3b8);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.ap-ex-row strong{font-size:13px}
+.ap-trend.up{color:#4ade80}.ap-trend.down{color:#f87171}.ap-trend.stable{color:var(--ap-text,#e5e7eb)}
+.ap-action{display:block}
+.ap-ex-note{margin-top:12px}
+@media(max-width:900px){.ap-ex-row{grid-template-columns:minmax(160px,1.2fr) repeat(2,minmax(90px,.6fr)) minmax(180px,1fr)}}
+@media(max-width:699px){.ap-ex-row{grid-template-columns:1fr 1fr;gap:10px;padding:12px}.ap-ex-name{grid-column:1/-1}.ap-ex-row>div:last-child{grid-column:1/-1;padding-top:8px;border-top:1px solid var(--ap-border,rgba(148,163,184,.12))}}
+@media(max-width:420px){.ap-ex-row{grid-template-columns:1fr}.ap-ex-name,.ap-ex-row>div:last-child{grid-column:auto}.ap-ex-row>div:not(.ap-ex-name){display:grid;grid-template-columns:78px 1fr;align-items:center}.ap-ex-label{margin:0}}

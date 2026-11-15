@@ -1,0 +1,2 @@
+/* Stage 16 — audit status styling. Hidden unless explicitly rendered by a diagnostic UI. */
+.ap-intelligence-audit{display:grid;gap:10px}.ap-intelligence-audit__row{display:flex;justify-content:space-between;gap:12px;align-items:center}.ap-intelligence-audit__status{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}.ap-intelligence-audit__status.is-pass{color:var(--ap-accent,#7dd3fc)}.ap-intelligence-audit__status.is-fail{color:#fca5a5}

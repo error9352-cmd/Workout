@@ -1,0 +1,7 @@
+/* ATHLETIC PHYSIQUE — Stage 15 Safety Guardrails */
+:root{--ap-safe-border:color-mix(in srgb,var(--ap-border,#2b3550) 82%,transparent)}
+.ap-stage15-safety{margin-top:10px;padding:10px 12px;border:1px solid var(--ap-safe-border);border-radius:12px;background:var(--ap-surface-2,#121826);font-size:12px}
+.ap-stage15-safety b{font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.ap-stage15-safety small{display:block;margin-top:3px;color:var(--ap-muted,#8c97b2);line-height:1.45}
+.ap-stage15-safety.adjusted{border-color:color-mix(in srgb,var(--ap-accent,#5eead4) 42%,var(--ap-safe-border))}
+@media(max-width:699px){.ap-stage15-safety{padding:9px 10px}}
