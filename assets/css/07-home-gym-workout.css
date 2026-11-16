@@ -186,3 +186,68 @@
   .home-personal-preview{grid-template-columns:1fr}
   .home-personal-preview p{grid-column:auto}
 }
+
+/* Stage 6.4 — Weekly schedule recommendation now uses the shared Gym card/row visual system. */
+
+/* Stage 6.5 — visual parity refinement: keep Home Gym weekly recommendation
+   and selected-program sections on the same card rhythm as Gym Workout. */
+.home-workout-view > .card{
+  min-width:0;
+}
+.home-weekly-recommendation .row{
+  min-width:0;
+}
+.home-weekly-recommendation .row > span:first-child{
+  min-width:0;
+}
+.home-weekly-recommendation .prev{
+  line-height:1.35;
+}
+@media(max-width:699px){
+  .home-workout-view > .card{
+    border-radius:15px;
+  }
+  .home-weekly-recommendation .btn.ghost.sm{
+    width:100%;
+    min-height:44px;
+  }
+}
+
+/* Stage 6.6 — final Gym/Home Gym visual parity: reuse the shared Workout rhythm. */
+.home-workout-view .dpick{margin-bottom:0}
+.home-workout-view .workout-start-card{margin-top:10px}
+.home-workout-view .card{box-sizing:border-box}
+.home-workout-view .card h2{margin-top:0}
+.home-workout-view .card .row:last-child{border-bottom:0}
+.home-workout-view .card .btn.ghost.sm{min-height:40px}
+@media(max-width:699px){
+  .home-workout-view .dpick{gap:8px}
+  .home-workout-view .card{border-radius:15px}
+}
+
+/* Stage 6.7 — Home Gym uses the same Workout page grid hierarchy as Gym.
+   The wrapper becomes layout-transparent on desktop so the shared #app grid
+   can place selected program, all programs, and the Home Gym side card equally. */
+@media (min-width:700px){
+  .home-workout-view{display:contents}
+  #app > .home-workout-view > .workout-mode-switch,
+  #app > .home-workout-view > h1,
+  #app > .home-workout-view > h1 + .sub,
+  #app > .home-workout-view > h2,
+  #app > .home-workout-view > .dpick,
+  #app > .home-workout-view > .workout-start-card{grid-column:1/-1}
+  #app > .home-workout-view > .card{min-width:0;margin-top:0}
+}
+.home-side-subtitle{margin-top:18px!important}
+@media(max-width:699px){
+  .home-workout-view{display:block}
+}
+
+/* Stage 6.7 — the Gym/Home Gym mode switch is one shared page control. */
+@media (min-width:700px){
+  .home-workout-view .workout-mode-switch{width:100%;max-width:100%;margin-left:0;margin-right:0}
+}
+
+.home-personal-program-preview{margin-top:14px}
+.home-personal-program-preview .pkh{margin-bottom:6px}
+.home-personal-program-preview [data-tgb]{margin-top:4px}
