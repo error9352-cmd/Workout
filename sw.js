@@ -2,7 +2,7 @@
    Navigasi dan aset aplikasi lokal: network-first agar update terbaru segera dipakai.
    Resource eksternal: cache-first agar tetap nyaman saat offline.
    Cache versi dinaikkan setiap perubahan strategi/asset PWA yang material. */
-const V = 'ap-v57';
+const V = 'ap-v58';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {

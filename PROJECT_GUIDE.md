@@ -976,3 +976,60 @@ Aturan:
 - Desktop/tablet: tombol aksi pada baris informasi menggunakan lebar konten.
 - Mobile: tombol tetap full-width.
 - Recommendation logic, canonical data, history, dan decision priority tidak berubah.
+
+## Stage 6 — Adaptive Safety & Consistency Audit
+
+Stage 6 memperjelas batas kewenangan antar-engine adaptive agar satu workout aktif tidak menerima perubahan target dari dua jalur yang berbeda.
+
+### Perubahan utama
+- `assets/js/53-progression-workout-adaptive-bridge.js` tetap menyediakan konteks progression, tetapi tidak lagi mengubah target active workout secara langsung ketika Unified Recommendation Engine tersedia.
+- `assets/js/54-unified-recommendation-engine.js` menjadi satu jalur keputusan final untuk target active workout.
+- `assets/js/56-recommendation-safety-guardrails.js` tetap menjadi pemeriksaan keselamatan terakhir.
+- `assets/js/45-gym-smart-program.js` tidak lagi melakukan rotasi berbasis `too_hard`/`stagnant` ketika Unified Adaptive Engine tersedia; rotasi tersebut ditangani `assets/js/46-unified-adaptive-engine.js`.
+- Rotasi berbasis frekuensi pada Gym Smart Program tetap dipertahankan.
+
+### Urutan kewenangan adaptive
+Canonical Training Data → Exercise Progression / Session Evaluation → Weekly Adaptation → Unified Adaptive Rotation → Unified Recommendation → Decision Trace → Safety Guardrails → Active Workout.
+
+### Validasi Stage 6
+- Stage 16 Intelligence Audit: 12/12 lulus.
+- Stage 17 End-to-End Intelligence QA: 21/21 lulus.
+- Seluruh JavaScript aplikasi lolos `node --check` kecuali `assets/js/24-supabase-cdn.js`, yang merupakan wrapper HTML `<script>`.
+- Browser-level E2E tidak diklaim pada tahap ini.
+
+
+## Stage 6.2 — Home Gym UX parity
+- Home Gym weekly schedule is now interactive like the Gym recommendation flow.
+- Added a Home Gym weekly recommendation sheet with live Level, weekly frequency, and equipment controls.
+- Added live session/program previews before applying the schedule.
+- Existing Home Gym equipment-aware program generation remains the source of truth.
+- Added interactive affordance to weekly schedule day cards.
+- Gym recommendation flow and Gym scheduling logic remain untouched.
+
+
+## Stage 6.3 — Home Gym Visual Parity
+
+- Home Gym Workout kini menggunakan struktur visual yang sama dengan Gym untuk header, day picker, kartu `SIAP LATIHAN`, detail program, daftar semua program, dan kartu peralatan.
+- Rekomendasi jadwal mingguan Home Gym diselaraskan dengan pola visual rekomendasi Gym.
+- Modal rekomendasi Home Gym menggunakan komponen visual rekomendasi yang sama dengan Gym, dengan kontrol tambahan untuk peralatan.
+- Engine Home Gym dan data/adaptive logic yang sudah ada tetap dipertahankan.
+- Audit: `audit/HOME_GYM_VISUAL_PARITY_STAGE6_3.md`.
+
+## Stage 6.4 — Gym/Home Gym Visual Parity Refinement
+- Home Gym weekly schedule recommendation now uses the same shared `card` + `row` visual system as the rest of the Gym experience instead of a separate Home Gym-specific schedule card style.
+- Home Gym recommendation preview now reuses the shared `apTplCard` / exercise-list presentation used by Gym when available, keeping typography, spacing, disclosure behavior, and program preview structure consistent.
+- Home Gym-specific logic remains limited to equipment-aware plan generation and Home Gym adaptation data.
+- No changes to active workout state, completion guard, auto-resume, progression, or Supabase data handling.
+
+
+## Stage 6.6 — Final Gym/Home Gym Visual Parity
+- Home Gym selected-program section now follows the shared Gym Workout card hierarchy and terminology.
+- Home Gym uses the shared workout-start card and day-picker rhythm without introducing a separate visual system.
+- Home Gym-specific equipment and adaptive logic remain unchanged.
+- No changes to workout logging, auto-resume, completion guard, unified intelligence, history, or Supabase.
+
+
+## Stage 6.9 — Interactive first-time welcome wizard
+- First-time `Selamat datang` flow is now a multi-step onboarding wizard: intro → goal → level → weekly frequency → body data → program preview.
+- Added visible progress indicator, back/next navigation, selectable goal cards, level cards, frequency cards, live summary, and weekly program preview.
+- Existing program generation and `ap_onb` completion behavior remain the source of truth; the wizard only improves the first-time UX and stores the selected goal in `ap_profile`/`ap_recv`.
