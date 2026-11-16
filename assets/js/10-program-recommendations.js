@@ -96,9 +96,84 @@ const PL={Pemula:{2:['Full Body A','Full Body B'],3:['Full Body A','Full Body B'
 Menengah:{3:['Push','Pull','Legs'],4:['Upper Kekuatan','Lower Kekuatan','Bahu dan Lengan','Legs'],5:['Push','Pull','Legs','Upper Kekuatan','Lower Kekuatan']},
 Lanjutan:{4:['Push Hipertrofi','Pull Hipertrofi','Legs Hipertrofi','Bahu dan Lengan'],5:['Push Hipertrofi','Pull Hipertrofi','Legs Hipertrofi','Dada dan Punggung','Bahu dan Lengan'],6:['Push Hipertrofi','Pull Hipertrofi','Legs Hipertrofi','Push','Pull','Legs']},
 Expert:{4:['Power Upper','Power Lower','Volume Upper','Volume Lower'],5:['Power Upper','Power Lower','Volume Upper','Volume Lower','HIIT Kardio'],6:['Power Upper','Power Lower','Volume Upper','Volume Lower','Bahu dan Lengan','HIIT Kardio']}},
-DW={2:[1,4],3:[1,3,5],4:[1,2,4,5],5:[1,2,3,5,6],6:[1,2,3,4,5,6]},
+DW={2:[1,4],3:[1,3,5],4:[1,2,4,6],5:[1,2,3,5,6],6:[1,2,3,4,5,6]},
 RG={Pemula:[2,4,3],Menengah:[3,5,4],Lanjutan:[4,6,5],Expert:[4,6,5]},
 RN={Pemula:'Fokus teknik dan konsistensi; otot dilatih sering dengan volume rendah.',Menengah:'Mulai tambah beban dan volume; pemulihan antar sesi makin penting.',Lanjutan:'Volume tinggi per otot; butuh tidur dan nutrisi yang baik.',Expert:'Beban berat dan volume besar; atur deload secara berkala.'};
+function weeklyAdaptiveState(level,days){
+  const base=Math.max(RG[level][0],Math.min(RG[level][1],Number(days)||RG[level][2]));
+  const out={days:base,reason:'',action:'baseline',stats:null};
+  try{
+    const u=window.apUnifiedIntelligence;
+    if(!u||typeof u.weeklyStats!=='function')return out;
+    const w=u.weeklyStats('gym');out.stats=w;
+    const a=Number(w.adherence)||0,r=Number(w.avgRpe)||0,v=Number(w.volumeDelta)||0;
+    if(w.sessions===0){out.reason='Belum ada cukup data minggu sebelumnya; jadwal ini menjadi baseline.';return out}
+    if(r>=8||a<0.6){
+      out.days=Math.max(RG[level][0],base-1);
+      out.action='recovery';
+      out.reason=r>=8?'RPE minggu sebelumnya tinggi; frekuensi diturunkan satu tingkat untuk memberi ruang pemulihan.':`Konsistensi minggu sebelumnya ${Math.round(a*100)}%; frekuensi diturunkan satu tingkat agar lebih realistis.`;
+      return out;
+    }
+    if(a>=0.9&&r>0&&r<=7&&v>=-10){
+      out.days=Math.min(RG[level][1],base+1);
+      out.action='progression';
+      out.reason='Konsistensi tinggi, RPE terkendali, dan volume tidak turun tajam; frekuensi dapat dinaikkan satu tingkat.';
+      return out;
+    }
+    out.reason='Frekuensi dipertahankan karena data belum menunjukkan kebutuhan untuk menambah atau mengurangi sesi.';
+  }catch(e){}
+  return out;
+}
+function adaptiveProgramState(level,days,goal){
+  const base=(PL[level]&&PL[level][days])?PL[level][days].slice():[];
+  const out={programs:base,focus:'',reason:'',stats:null};
+  if(!base.length)return out;
+  try{
+    const u=window.apUnifiedIntelligence;
+    if(!u)return out;
+    const ctx=typeof u.context==='function'?u.context('gym'):null;
+    const M=window.apUnifiedData&&typeof window.apUnifiedData.muscles==='function'?window.apUnifiedData.muscles:null;
+    let weak=[];
+    if(M){
+      const end=typeof todayIso==='string'?todayIso:new Date().toISOString().slice(0,10);
+      const d=new Date(end+'T00:00:00');d.setDate(d.getDate()-13);
+      const mv=M(d.toISOString().slice(0,10),end)||{};
+      weak=Object.entries(mv).filter(x=>Number(x[1])>0).sort((a,b)=>Number(a[1])-Number(b[1])).slice(0,2).map(x=>String(x[0]));
+    }
+    const label=g=>MG[g]||g;
+    const aliases={Dada:['Dada','Chest'],Punggung:['Punggung','Back'],Bahu:['Bahu','Shoulder'],Lengan:['Lengan','Biceps','Triceps'],Kaki:['Kaki','Quadriceps','Hamstring','Glutes'],Core:['Core','Perut']};
+    const matches=(name,keys)=>keys.some(k=>name.toLowerCase().includes(k.toLowerCase()));
+    let focus=weak.map(label);
+    if(!focus.length&&ctx&&ctx.goal)focus=ctx.goal==='Strength'?['Kekuatan']:ctx.goal==='Athletic Performance'?['Power']:[];
+    if(focus.length){
+      const pool=Object.values(T).filter(t=>t.l===level);
+      const chosen=[];
+      base.forEach((orig,idx)=>{
+        let best=pool.find(t=>t.n===orig)||T.find(t=>t.n===orig);
+        let bestScore=-1e9;
+        pool.forEach(t=>{
+          if(chosen.includes(t.n))return;
+          let score=0;
+          focus.forEach(f=>{const keys=aliases[f]||[f];if(matches(t.n,keys)||matches(t.f,keys))score+=4; t.ex.forEach(e=>{if(matches(e[0],keys))score+=2})});
+          if(goal==='Kekuatan'&&/Kekuatan|Power/.test(t.n))score+=2;
+          if(goal==='Power'&&/Power|HIIT/.test(t.n))score+=2;
+          score-=Math.abs(idx-pool.indexOf(t))*0.05;
+          if(score>bestScore){bestScore=score;best=t}
+        });
+        chosen.push(best.n);
+      });
+      if(chosen.length===base.length&&new Set(chosen).size===base.length){
+        const changed=chosen.some((n,i)=>n!==base[i]);
+        if(changed){out.programs=chosen;out.focus=focus.slice(0,2).join(' dan ');out.reason='Split tetap mengikuti level dan frekuensi Anda, tetapi penekanan program disesuaikan dengan area yang volumenya paling rendah pada dua minggu terakhir.';}
+      }
+    }
+  }catch(e){}
+  return out;
+}
+function weeklyCoachNote(level,days){
+  const a=weeklyAdaptiveState(level,days);
+  return a.reason||'Jadwal disusun dengan jeda pemulihan yang wajar di antara sesi.';
+}
 function restoreProg(){const o=ls.get('ap_prog_prev',null);if(!o)return false;if(getA()){toast('Selesaikan atau batalkan workout yang sedang berjalan dulu.');return false}
 for(let k=0;k<=6;k++)delete PROG[k];Object.keys(o.prog).forEach(k=>{PROG[k]=o.prog[k]});saveProg();ls.set('ap_profile',Object.assign({},prof(),{freq:o.freq}));ls.set('ap_prog_prev',null);render();toast('Jadwal sebelumnya dikembalikan.');return true}
 const GL={'Umum':'Bangun otot',"Six pack":'Six pack','Turun BB':'Turun berat badan','Kekuatan':'Kekuatan','Stamina':'Stamina',Bulking:'Massa otot (bulking)',Dada:'Dada bidang',Punggung:'Punggung lebar',Bahu:'Bahu lebar',Lengan:'Lengan besar',Kaki:'Kaki dan bokong',Vtaper:'Tubuh atletis (V-taper)',Postur:'Postur dan punggung sehat',Power:'Power dan atletik'},
@@ -116,15 +191,17 @@ if(g==='Kaki'){if(/Legs|Lower|Full/.test(nm)){add(KL[(i*2)%4]);add(KL[(i*2+1)%4]
 if(g==='Bulking'){r=r.map((e,k)=>{const m=e[1].match(/^(\d+) × (\d+)–(\d+)$/);return k<3&&m&&+m[1]<4?[e[0],(+m[1]+1)+' × '+m[2]+'–'+m[3]]:e})}
 return r}
 function recSheet(){let st=ls.get('ap_recv',{l:'Pemula',d:+prof().freq||3}),armed=false;if(!RG[st.l])st.l='Pemula';if(!GL[st.g])st.g='Umum';
+const adapt=weeklyAdaptiveState(st.l,st.d);if(adapt.stats&&adapt.stats.sessions&&adapt.days!==st.d)st={...st,d:adapt.days};
 const fix=()=>{st.d=Math.min(RG[st.l][1],Math.max(RG[st.l][0],+st.d||RG[st.l][2]))};fix();
 const o=document.createElement('div');o.className='sheetbg schedule-recommendation-modal';
 o.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="Rekomendasi jadwal mingguan"><div class="grab"></div><h2>Rekomendasi jadwal mingguan</h2><p class="sub">Pilih level dan berapa kali Anda bisa latihan per minggu.</p><p class="pkh">Level</p><div class="chips" id="rl"></div><p class="pkh">Hari latihan per minggu</p><div class="chips" id="rd"></div><p class="pkh">Tujuan latihan</p><div class="chips" id="rg"></div><p class="prev" id="rgd"></p><p class="prev" id="rn"></p><div id="rp"></div><button class="btn" id="ra" style="margin-top:14px">Terapkan ke jadwal</button>${ls.get('ap_prog_prev',null)?'<button class="btn ghost sm" id="rr">Kembalikan jadwal sebelumnya</button>':''}<button class="btn ghost sm" id="rx">Tutup</button></div>`;
-const plan=()=>PL[st.l][st.d].map((n,i)=>{const t=T.find(t=>t.n===n);return Object.assign({},t,{ex:GM(st.g,t.ex,i,t.n)})});
+const plan=()=>{const ap=adaptiveProgramState(st.l,st.d,st.g);return ap.programs.map((n,i)=>{const t=T.find(t=>t.n===n);return Object.assign({},t,{ex:GM(st.g,t.ex,i,t.n)})})};
 const draw=()=>{const a=RG[st.l][0],b=RG[st.l][1],r=RG[st.l][2];
 o.querySelector('#rl').innerHTML=Object.keys(RG).map(l=>`<button class="chip" data-rl="${l}" ${l===st.l?'aria-current="true"':''}>${l}</button>`).join('');
 o.querySelector('#rd').innerHTML=Array.from({length:b-a+1},(_,i)=>a+i).map(d=>`<button class="chip" data-rd="${d}" ${d===st.d?'aria-current="true"':''}>${d}x${d===r?' <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true" style="vertical-align:-1px;margin-left:3px"><path d="m12 2.8 2.8 5.7 6.3.9-4.6 4.5 1.1 6.3-5.6-3-5.6 3 1.1-6.3-4.6-4.5 6.3-.9L12 2.8Z"/></svg>':''}</button>`).join('');
 o.querySelector('#rg').innerHTML=Object.keys(GL).map(g=>`<button class="chip" data-rg="${g}" ${g===st.g?'aria-current="true"':''}>${GL[g]}</button>`).join('');o.querySelector('#rgd').textContent=GD[st.g];
-o.querySelector('#rn').textContent=RN[st.l]+' Umumnya '+r+' hari cukup; sesuaikan dengan waktu dan pemulihan Anda.';
+const aps=adaptiveProgramState(st.l,st.d,st.g);
+o.querySelector('#rn').textContent=RN[st.l]+' Umumnya '+r+' hari cukup; '+weeklyCoachNote(st.l,st.d)+' '+(adapt.action==='recovery'?'Rekomendasi adaptif: '+st.d+' hari.':adapt.action==='progression'?'Rekomendasi adaptif: '+st.d+' hari.':'')+(aps.reason?' '+aps.reason:'');
 o.querySelector('#rp').innerHTML=plan().map((t,i)=>apTplCard(HARI[DW[st.d][i]]+' · '+t.n,t.f+', '+t.ex.length+' gerakan','',t)).join('');
 armed=false;o.querySelector('#ra').textContent='Terapkan ke jadwal'};
 const x=()=>{o.classList.add('out');setTimeout(()=>o.remove(),250);document.removeEventListener('keydown',kd)},kd=e=>{if(e.key==='Escape')x()};

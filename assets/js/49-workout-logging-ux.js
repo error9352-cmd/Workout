@@ -83,22 +83,17 @@
     if(ni<a.sets.length)saveFocus(ni,nj);
   },true);
 
-  // Protect the primary completion action from accidental taps when the workout is partial.
+  // Prevent finishing a workout while any working set remains unlogged.
+  // Redirect directly to the first exercise with pending sets; never offer an override.
   document.addEventListener('click',function(e){
     const b=e.target.closest&&e.target.closest('[data-finish]');
     if(!b)return;
-    if(b.dataset[FINISH_KEY]){delete b.dataset[FINISH_KEY];return;}
     const a=active();if(!a)return;
-    const total=(a.sets||[]).reduce((n,x)=>n+(x||[]).filter(s=>!s.w).length,0);
-    const done=(a.sets||[]).reduce((n,x)=>n+(x||[]).filter(s=>s.done&&!s.w).length,0);
-    if(done===0)return;
-    if(done<total){
+    const guard=typeof window.apValidateWorkoutCompletion==='function'
+      ?window.apValidateWorkoutCompletion(a,{toast:true,render:true})
+      :{ok:!((a.sets||[]).some(row=>(row||[]).some(s=>!s.done&&!s.w)))};
+    if(!guard.ok){
       e.preventDefault();e.stopImmediatePropagation();
-      const ok=window.confirm(`Workout belum selesai. ${total-done} set masih belum dicatat. Tetap selesaikan workout sekarang?`);
-      if(ok){
-        b.dataset[FINISH_KEY]='1';
-        setTimeout(()=>{if(b.isConnected)b.click()},0);
-      }
     }
   },true);
 

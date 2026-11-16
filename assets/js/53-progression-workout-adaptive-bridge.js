@@ -138,9 +138,14 @@
       const result=oldStart.apply(this,arguments);
       const a=getActive();
       if(a&&String(a.dow)===String(dow)){
-        const changes=applyToActive(a)||[];
+        // Stage 13 is the single final authority for active-workout target changes.
+        // Keep this bridge read-only at start time when Unified Recommendation is ready;
+        // Stage 13 applies the resolved recommendation and Stage 15 validates it.
+        const unifiedReady=!!(window.apUnifiedRecommendation&&window.apUnifiedRecommendation.ready);
+        const changes=unifiedReady?[]:(applyToActive(a)||[]);
         a.apProgressionBridge=buildBridge(mode,dow);
         a.apProgressionBridge.applied=changes;
+        a.apProgressionBridge.authority=unifiedReady?'unified-recommendation':'canonical-exercise-progression';
         saveActive(a);
       }
       return result;

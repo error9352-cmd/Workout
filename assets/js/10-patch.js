@@ -101,13 +101,17 @@ const x=()=>{o.classList.add('out');setTimeout(()=>o.remove(),250);document.remo
 o.onclick=e=>{if(e.target===o)x();const c=e.target.closest('[data-lv]');if(c){lv=c.dataset.lv;ls.set('ap_tplv',lv);draw();return}const b=e.target.closest('[data-tp]');if(b&&!b.disabled){const i=+b.dataset.tp;add(i);added.add(i);draw()}};
 o.querySelector('#tpx').onclick=x;draw();document.body.appendChild(o);document.addEventListener('keydown',kd)}
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-tpl]'))tplSheet()});
-const PL={Pemula:{2:['Full Body A','Full Body B'],3:['Full Body A','Full Body B','Full Body C'],4:['Upper Mesin','Lower Mesin','Full Body C','Cardio dan Core']},
+const PL={
+Pemula:{2:['Full Body A','Full Body B'],3:['Full Body A','Full Body B','Full Body C'],4:['Upper Mesin','Lower Mesin','Full Body A','Full Body B']},
 Menengah:{3:['Push','Pull','Legs'],4:['Upper Kekuatan','Lower Kekuatan','Bahu dan Lengan','Legs'],5:['Push','Pull','Legs','Upper Kekuatan','Lower Kekuatan']},
 Lanjutan:{4:['Push Hipertrofi','Pull Hipertrofi','Legs Hipertrofi','Bahu dan Lengan'],5:['Push Hipertrofi','Pull Hipertrofi','Legs Hipertrofi','Dada dan Punggung','Bahu dan Lengan'],6:['Push Hipertrofi','Pull Hipertrofi','Legs Hipertrofi','Push','Pull','Legs']},
 Expert:{4:['Power Upper','Power Lower','Volume Upper','Volume Lower'],5:['Power Upper','Power Lower','Volume Upper','Volume Lower','HIIT Kardio'],6:['Power Upper','Power Lower','Volume Upper','Volume Lower','Bahu dan Lengan','HIIT Kardio']}},
-DW={2:[1,4],3:[1,3,5],4:[1,2,4,5],5:[1,2,3,5,6],6:[1,2,3,4,5,6]},
+// Recovery-aware placement: four-day plans use Mon/Tue/Thu/Sat rather than
+// placing the fourth session immediately after the third. This keeps the
+// existing program templates intact while making the weekly rhythm clearer.
+DW={2:[1,4],3:[1,3,5],4:[1,2,4,6],5:[1,2,3,5,6],6:[1,2,3,4,5,6]},
 RG={Pemula:[2,4,3],Menengah:[3,5,4],Lanjutan:[4,6,5],Expert:[4,6,5]},
-RN={Pemula:'Fokus teknik dan konsistensi; otot dilatih sering dengan volume rendah.',Menengah:'Mulai tambah beban dan volume; pemulihan antar sesi makin penting.',Lanjutan:'Volume tinggi per otot; butuh tidur dan nutrisi yang baik.',Expert:'Beban berat dan volume besar; atur deload secara berkala.'};
+RN={Pemula:'Fokus teknik dan konsistensi; gunakan latihan seluruh tubuh dan sisakan hari pemulihan di antara sesi bila memungkinkan.',Menengah:'Mulai tambah beban dan volume; jadwal membagi stimulus tubuh atas dan bawah agar pemulihan antar sesi lebih teratur.',Lanjutan:'Volume tinggi per otot; gunakan jeda pemulihan yang cukup dan hindari menumpuk sesi berat tanpa jeda.',Expert:'Beban berat dan volume besar; pertahankan pemisahan sesi utama dan atur deload secara berkala.'};
 function restoreProg(){const o=ls.get('ap_prog_prev',null);if(!o)return false;if(getA()){toast('Selesaikan atau batalkan workout yang sedang berjalan dulu.');return false}
 for(let k=0;k<=6;k++)delete PROG[k];Object.keys(o.prog).forEach(k=>{PROG[k]=o.prog[k]});saveProg();ls.set('ap_profile',Object.assign({},prof(),{freq:o.freq}));ls.set('ap_prog_prev',null);render();toast('Jadwal sebelumnya dikembalikan.');return true}
 const GL={'Umum':'Bangun otot',"Six pack":'Six pack','Turun BB':'Turun berat badan','Kekuatan':'Kekuatan','Stamina':'Stamina',Bulking:'Massa otot (bulking)',Dada:'Dada bidang',Punggung:'Punggung lebar',Bahu:'Bahu lebar',Lengan:'Lengan besar',Kaki:'Kaki dan bokong',Vtaper:'Tubuh atletis (V-taper)',Postur:'Postur dan punggung sehat',Power:'Power dan atletik'},
@@ -148,24 +152,133 @@ plan().forEach((t,i)=>{PROG[DW[st.d][i]]={n:t.n,f:t.f,ex:t.ex.map(v=>v.slice())}
 saveProg();ls.set('ap_recv',st);ls.set('ap_profile',Object.assign({},prof(),{freq:st.d}));x();render();undoToast('Jadwal diperbarui: '+st.d+' hari per minggu.',restoreProg)}};
 draw();document.body.appendChild(o);document.addEventListener('keydown',kd)}
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-rec]'))recSheet()});
-function onbSheet(){let l='Pemula',d=3;const fix=()=>{d=Math.min(RG[l][1],Math.max(RG[l][0],d))};
+function onbSheet(){
+document.body.classList.add('ap-onboarding-open');
+// Welcome wizard must stay visually isolated from transient global notifications.
+// Some older UI layers can recreate a toast after the wizard opens, so suppress
+// those nodes while onboarding is active rather than relying on CSS alone.
+const suppressTransient=()=>document.querySelectorAll('#toast,.toast,.prpop').forEach(el=>{el.remove();});
+suppressTransient();
+const transientObserver=new MutationObserver(suppressTransient);
+transientObserver.observe(document.body,{childList:true,subtree:true});
+let step=0,l='Pemula',d=3,goal='Umum';
+const goals=[
+  ['Umum','Bangun otot & kebugaran','Program seimbang untuk progres menyeluruh.'],
+  ['Kekuatan','Kekuatan','Fokus pada kekuatan dan progres beban.'],
+  ['Turun BB','Turun berat badan','Latihan aktif dengan volume dan kardio yang terarah.'],
+  ['Six pack','Perut lebih terlihat','Prioritaskan core sambil membangun kebugaran.'],
+  ['Stamina','Stamina & kebugaran','Lebih fokus pada kapasitas kerja dan daya tahan.'],
+  ['Vtaper','Bentuk tubuh atletis','Prioritaskan bahu, punggung, dan proporsi tubuh.']
+];
+const steps=['Mulai','Tujuan','Level','Jadwal','Data tubuh','Preview'];
+const fix=()=>{d=Math.min(RG[l][1],Math.max(RG[l][0],d))};
 const o=document.createElement('div');o.className='sheetbg';
-o.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="Selamat datang"><div class="grab"></div><h2>Selamat datang</h2><p class="sub">Isi sedikit data agar jadwal latihan sesuai dengan Anda. Semua bisa diubah kapan saja di Profil.</p><label for="ob_n">Nama</label><input id="ob_n" maxlength="30" autocomplete="off"><label for="ob_h">Tinggi (cm)</label><input id="ob_h" inputmode="decimal"><label for="ob_w">Berat badan (kg)</label><input id="ob_w" inputmode="decimal"><p class="pkh">Level</p><div class="chips" id="ob_l" style="flex-wrap:wrap"></div><p class="pkh">Hari latihan per minggu</p><div class="chips" id="ob_d"></div><p class="prev" id="ob_r"></p><button class="btn" id="ob_go" style="margin-top:14px">Buat jadwal saya</button><button class="btn ghost sm" id="ob_skip">Lewati dulu</button></div>`;
-const draw=()=>{const a=RG[l][0],b=RG[l][1],r=RG[l][2];
-o.querySelector('#ob_l').innerHTML=Object.keys(RG).map(k=>`<button class="chip" data-ol="${k}" ${k===l?'aria-current="true"':''}>${k}</button>`).join('');
-o.querySelector('#ob_d').innerHTML=Array.from({length:b-a+1},(_,i)=>a+i).map(n=>`<button class="chip" data-od="${n}" ${n===d?'aria-current="true"':''}>${n}x${n===r?' <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true" style="vertical-align:-1px;margin-left:3px"><path d="m12 2.8 2.8 5.7 6.3.9-4.6 4.5 1.1 6.3-5.6-3-5.6 3 1.1-6.3-4.6-4.5 6.3-.9L12 2.8Z"/></svg>':''}</button>`).join('');
-o.querySelector('#ob_r').textContent=RN[l]};
-const x=()=>{o.classList.add('out');setTimeout(()=>o.remove(),250);document.removeEventListener('keydown',kd)},kd=e=>{if(e.key==='Escape'){ls.set('ap_onb',1);x()}};
-o.onclick=e=>{const L=e.target.closest('[data-ol]'),D=e.target.closest('[data-od]');
-if(L){l=L.dataset.ol;fix();draw();return}if(D){d=+D.dataset.od;draw();return}
-if(e.target.closest('#ob_skip')){ls.set('ap_onb',1);x();return}
-if(e.target.closest('#ob_go')){const h=parseFloat(o.querySelector('#ob_h').value.replace(',','.')),w=parseFloat(o.querySelector('#ob_w').value.replace(',','.'));
-if(!(h>100&&h<250)){toast('Tinggi badan harus 100–250 cm.');return}if(!(w>20&&w<300)){toast('Berat badan harus 20–300 kg.');return}
-const plan=PL[l][d].map(n=>T.find(t=>t.n===n));for(let k=0;k<=6;k++)delete PROG[k];
-plan.forEach((t,i)=>{PROG[DW[d][i]]={n:t.n,f:t.f,ex:t.ex.map(v=>v.slice())}});saveProg();
-ls.set('ap_recv',{l,d});ls.set('ap_profile',{name:o.querySelector('#ob_n').value.trim(),height:h,startKg:w,freq:d,goal:''});
-weights=weights.filter(q=>q.d!==todayIso).concat({d:todayIso,kg:w});ls.set('ap_weights',weights);ls.set('ap_onb',1);
-x();render();toast('Jadwal dibuat: '+d+' hari per minggu.')}};
-draw();document.body.appendChild(o);document.addEventListener('keydown',kd)}
+o.innerHTML=`<div class="sheet ap-welcome-wizard" role="dialog" aria-modal="true" aria-label="Selamat datang">
+<div class="grab"></div>
+<div class="ap-wz-top"><div class="ap-wz-brand">ATHLETIC PHYSIQUE</div><button type="button" class="ap-wz-close" id="ob_close" aria-label="Tutup">×</button></div>
+<div class="ap-wz-progress"><div class="ap-wz-progress-fill" id="ob_pf"></div></div>
+<div class="ap-wz-step" id="ob_step"></div>
+<div id="ob_content"></div>
+<div class="ap-wz-nav"><button class="btn ghost sm" id="ob_back" type="button">Kembali</button><button class="btn" id="ob_next" type="button">Lanjut</button></div>
+</div>`;
+
+const escHtml=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const getName=()=>o.querySelector('#ob_n')?.value.trim()||'';
+const getH=()=>parseFloat((o.querySelector('#ob_h')?.value||'').replace(',','.'));
+const getW=()=>parseFloat((o.querySelector('#ob_w')?.value||'').replace(',','.'));
+const previewPlan=()=>PL[l][d].map(n=>T.find(t=>t.n===n)).filter(Boolean);
+
+const render=()=>{
+  const pct=((step+1)/steps.length)*100;
+  o.querySelector('#ob_pf').style.width=pct+'%';
+  o.querySelector('#ob_step').innerHTML=`<span>Langkah ${step+1} dari ${steps.length}</span><b>${steps[step]}</b>`;
+  const c=o.querySelector('#ob_content');
+  c.classList.remove('ap-wz-content-enter');
+  requestAnimationFrame(()=>c.classList.add('ap-wz-content-enter'));
+  if(step===0){
+    c.innerHTML=`<div class="ap-wz-hero">
+      <div class="ap-wz-orb" aria-hidden="true"><svg viewBox="0 0 48 48" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6v7M24 35v7M6 24h7M35 24h7M11.3 11.3l5 5M31.7 31.7l5 5M36.7 11.3l-5 5M16.3 31.7l-5 5"/><circle cx="24" cy="24" r="8"/></svg></div>
+      <p class="ap-wz-eyebrow">SELAMAT DATANG</p>
+      <div class="ap-wz-title">Bangun versi terbaikmu.</div>
+      <p class="sub">Kita akan menyesuaikan pengalaman latihan berdasarkan tujuan, level, jadwal, dan kondisi awalmu.</p>
+      <div class="ap-wz-benefits">
+        <div><span>✓</span><b>Personal</b><small>Program mengikuti profilmu</small></div>
+        <div><span>✓</span><b>Adaptif</b><small>Mudah diubah kapan saja</small></div>
+        <div><span>✓</span><b>Terarah</b><small>Langsung dapat jadwal mingguan</small></div>
+      </div>
+      <div class="ap-wz-tip"><span class="ap-wz-tip-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7.5h.01"/></svg></span><span>Tidak perlu sempurna. Jawab sesuai kondisi kamu saat ini.</span></div>
+    </div>`;
+  }else if(step===1){
+    c.innerHTML=`<div class="ap-wz-section"><p class="ap-wz-eyebrow">TUJUAN UTAMA</p><h2>Apa yang ingin kamu capai?</h2><p class="sub">Pilih satu fokus utama. Kamu tetap bisa mengubahnya nanti dari Profil.</p>
+    <div class="ap-goal-grid">${goals.map(g=>`<button type="button" class="ap-goal ${g[0]===goal?'is-active':''}" data-og="${escHtml(g[0])}"><span class="ap-goal-icon" aria-hidden="true">${g[0]==='Kekuatan'?'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18V8M3 11v4M9 6v12M15 6v12M18 8v10M21 11v4"/></svg>':g[0]==='Turun BB'?'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M8 16l4 4 4-4"/></svg>':g[0]==='Six pack'?'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="4" width="10" height="16" rx="4"/><path d="M10 8h4M10 12h4M10 16h4"/></svg>':g[0]==='Stamina'?'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>':g[0]==='Vtaper'?'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5l4 4-2 4 5 6 5-6-2-4 4-4"/></svg>':'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/></svg>'}</span><b>${escHtml(g[1])}</b><small>${escHtml(g[2])}</small></button>`).join('')}</div></div>`;
+  }else if(step===2){
+    c.innerHTML=`<div class="ap-wz-section"><p class="ap-wz-eyebrow">PENGALAMAN</p><h2>Seberapa berpengalaman kamu?</h2><p class="sub">Ini membantu menentukan kompleksitas dan volume awal program.</p>
+    <div class="ap-choice-stack">${Object.keys(RG).map(k=>`<button type="button" class="ap-choice ${k===l?'is-active':''}" data-ol="${escHtml(k)}"><span class="ap-choice-radio"></span><span><b>${escHtml(k)}</b><small>${escHtml(RN[k])}</small></span></button>`).join('')}</div></div>`;
+  }else if(step===3){
+    const a=RG[l][0],b=RG[l][1];
+    c.innerHTML=`<div class="ap-wz-section"><p class="ap-wz-eyebrow">RITME LATIHAN</p><h2>Berapa hari kamu bisa latihan?</h2><p class="sub">Kami akan menyusun hari latihan dengan jeda pemulihan yang sesuai.</p>
+    <div class="ap-frequency-grid">${Array.from({length:b-a+1},(_,i)=>a+i).map(n=>`<button type="button" class="ap-frequency ${n===d?'is-active':''}" data-od="${n}"><b>${n}</b><span>hari / minggu</span>${n===RG[l][2]?'<em>Rekomendasi</em>':''}</button>`).join('')}</div>
+    <div class="ap-wz-mini">Untuk level <b>${escHtml(l)}</b>, sistem menyarankan <b>${RG[l][2]} hari</b> sebagai titik awal.</div></div>`;
+  }else if(step===4){
+    c.innerHTML=`<div class="ap-wz-section"><p class="ap-wz-eyebrow">DATA AWAL</p><h2>Kenali titik awalmu.</h2><p class="sub">Data ini membantu personalisasi. Masukkan angka yang paling mendekati kondisi sekarang.</p>
+    <div class="ap-wz-form">
+      <div class="ap-field"><label for="ob_n">Nama</label><input id="ob_n" maxlength="30" autocomplete="name" placeholder="Contoh: Budi"></div>
+      <div class="ap-field-row"><div class="ap-field"><label for="ob_h">Tinggi <span>cm</span></label><input id="ob_h" inputmode="decimal" placeholder="170"></div><div class="ap-field"><label for="ob_w">Berat <span>kg</span></label><input id="ob_w" inputmode="decimal" placeholder="65"></div></div>
+    </div>
+    <div class="ap-wz-tip"><span class="ap-wz-tip-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><span>Data ini dipakai untuk menyesuaikan pengalaman latihanmu dan dapat diubah kapan saja.</span></div></div>`;
+  }else{
+    const plan=previewPlan();
+    c.innerHTML=`<div class="ap-wz-section"><p class="ap-wz-eyebrow">SIAP DIMULAI</p><h2>Ini rancangan awalmu.</h2><p class="sub">Periksa ringkasannya sebelum jadwal dibuat.</p>
+    <div class="ap-summary">
+      <div><span>Tujuan</span><b>${escHtml(goals.find(x=>x[0]===goal)?.[1]||goal)}</b></div>
+      <div><span>Level</span><b>${escHtml(l)}</b></div>
+      <div><span>Frekuensi</span><b>${d}× / minggu</b></div>
+      ${getName()?`<div><span>Nama</span><b>${escHtml(getName())}</b></div>`:''}
+      ${getH()&&getW()?`<div><span>Data awal</span><b>${getH()} cm · ${getW()} kg</b></div>`:''}
+    </div>
+    <div class="ap-plan-preview"><div class="ap-plan-head"><span>Program mingguan</span><b>${d} sesi</b></div>${plan.map((t,i)=>`<div class="ap-plan-row"><span>${['Sen','Sel','Rab','Kam','Jum','Sab'][DW[d][i]-1]||'Hari'} </span><b>${escHtml(t.n)}</b><small>${t.ex?.length||0} gerakan</small></div>`).join('')}</div>
+    <div class="ap-wz-tip"><span class="ap-wz-tip-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg></span><span>Setelah dibuat, jadwal dan detail program tetap bisa kamu sesuaikan.</span></div></div>`;
+  }
+  o.querySelector('#ob_back').style.visibility=step===0?'hidden':'visible';
+  o.querySelector('#ob_next').textContent=step===steps.length-1?'Buat jadwal saya':'Lanjut';
+};
+
+const close=()=>{transientObserver.disconnect();o.classList.add('out');document.body.classList.remove('ap-onboarding-open');document.querySelectorAll('#toast,.toast,.prpop').forEach(el=>el.remove());setTimeout(()=>o.remove(),250);document.removeEventListener('keydown',kd)};
+const kd=e=>{if(e.key==='Escape'){ls.set('ap_onb',1);close()}};
+const validate=()=>{
+  if(step===4){
+    const h=getH(),w=getW();
+    if(!(h>100&&h<250)){toast('Tinggi badan harus 100–250 cm.');return false}
+    if(!(w>20&&w<300)){toast('Berat badan harus 20–300 kg.');return false}
+  }
+  return true;
+};
+const next=()=>{
+  if(!validate())return;
+  if(step<steps.length-1){step++;render();return}
+  const h=getH(),w=getW(),name=getName();
+  const plan=previewPlan();
+  for(let k=0;k<=6;k++)delete PROG[k];
+  plan.forEach((t,i)=>{PROG[DW[d][i]]={n:t.n,f:t.f,ex:t.ex.map(v=>v.slice())}});
+  saveProg();
+  ls.set('ap_recv',{l,d,goal});
+  ls.set('ap_profile',{name,height:h,startKg:w,freq:d,goal});
+  weights=weights.filter(q=>q.d!==todayIso).concat({d:todayIso,kg:w});
+  ls.set('ap_weights',weights);ls.set('ap_onb',1);
+  close();render();toast('Jadwal dibuat: '+d+' hari per minggu.');
+};
+const back=()=>{if(step>0){step--;render()}};
+o.addEventListener('click',e=>{
+  const L=e.target.closest('[data-ol]'),D=e.target.closest('[data-od]'),G=e.target.closest('[data-og]');
+  if(G){goal=G.dataset.og;render();return}
+  if(L){l=L.dataset.ol;fix();render();return}
+  if(D){d=+D.dataset.od;render();return}
+  if(e.target.closest('#ob_next')){next();return}
+  if(e.target.closest('#ob_back')){back();return}
+  if(e.target.closest('#ob_close')){ls.set('ap_onb',1);close();return}
+});
+render();document.body.appendChild(o);document.addEventListener('keydown',kd)
+}
+
 if(!ls.get('ap_onb',false)&&!prof().height&&!Object.keys(PROG).length&&!getA())setTimeout(onbSheet,500);
 })();

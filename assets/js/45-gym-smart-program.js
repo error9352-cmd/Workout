@@ -90,6 +90,11 @@
     }
     const m=last.exercise&&last.exercise.metrics;
     if(m&&num(m.avgRpe)>=9)return 'too_hard';
+    try{
+      const perf=ui&&ui.performance?ui.performance('gym',name):null;
+      if(perf&&perf.trend==='down')return 'stagnant';
+      if(perf&&perf.trend==='up'&&num(perf.last&&perf.last.rpe)>0&&num(perf.last.rpe)<=6)return 'too_easy';
+    }catch(e){}
     return 'successful';
   }
   function score(name,focus,goal,level,used,frequency){
@@ -123,7 +128,13 @@
     const old=String(ex[1]||'3 × 8–12');const sm=old.match(/^(\d+)\s*[×x]\s*(\d+)\s*[–-]\s*(\d+)/);
     const sets=Math.max(1,Math.min((LEVEL[level]||LEVEL.Pemula).maxSets,sm?+sm[1]:3));
     if(/menit|detik/i.test(old))return old;
-    return `${sets} × ${range[0]}–${range[1]}`;
+    let lo=range[0],hi=range[1];
+    const status=evalStatus(ex[0]);
+    if(status==='too_easy'){
+      lo=Math.min(hi,lo+1);
+      hi=hi+2;
+    }
+    return `${sets} × ${lo}–${hi}`;
   }
   function candidatesFor(focus){
     const list=allExercises();
@@ -150,7 +161,8 @@
         });
         // Keep the existing movement unless the intelligence has a clear reason to change it.
         const ev=evalStatus(oldName),u=usage(oldName);
-        const shouldRotate=ev==='too_hard'||ev==='stagnant'||(frequency>=5&&u.count>=3);
+        const unifiedAdaptiveReady=!!(window.apUnifiedAdaptive&&window.apUnifiedAdaptive.ready);
+        const shouldRotate=(unifiedAdaptiveReady?(frequency>=5&&u.count>=3):(ev==='too_hard'||ev==='stagnant'||(frequency>=5&&u.count>=3)));
         if(!shouldRotate)best=oldName;
         const item=[best,targetFor([best,old[1]],goal,level),old[2]||''];
         if(best!==oldName)changed.push({day:id,from:oldName,to:best,reason:ev==='stagnant'?'stagnasi':ev==='too_hard'?'terlalu berat':'rotasi frekuensi'});

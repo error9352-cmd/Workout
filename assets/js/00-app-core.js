@@ -19,7 +19,7 @@ return `<section class="card"><h2>Pencapaian</h2><p class="sub">${k} dari ${b.le
 document.documentElement.dataset.theme=ls.get('ap_theme','biru');
 function themeCard(){const t=ls.get('ap_theme','biru');return `<section class="card"><h2>Warna aksen</h2><div class="thm">${[['biru','Biru','#3B82F6,#22D3EE'],['hijau','Hijau','#16A34A,#A3E635'],['oranye','Oranye','#EA580C,#FBBF24'],['ungu','Ungu','#8B5CF6,#E879F9'],['merah','Merah','#E11D48,#FB7185']].map(x=>`<button class="th" data-th="${x[0]}" aria-pressed="${t===x[0]}"><i style="background:linear-gradient(135deg,${x[2]})"></i>${x[1]}</button>`).join('')}</div></section>`}
 function customCard(){const ks=Object.keys(PROG).map(Number).filter(k=>k>=7).sort((a,b)=>a-b);
-return `<section class="card"><h2>Latihan lain</h2><p class="sub">Menu tambahan di luar jadwal mingguan.</p>${ks.length?ks.map(k=>`<div class="row"><span>${esc(PROG[k].n)}<small class="prev" style="display:block">${PROG[k].ex.length} gerakan${PROG[k].f?', '+esc(PROG[k].f):''}</small></span><span style="display:flex;gap:6px"><button class="chip" data-xe="${k}">Ubah</button><button class="chip" data-start="${k}">Mulai</button></span></div>`).join(''):'<p class="empty">Belum ada menu tambahan.</p>'}<button class="btn ghost sm" data-xn="1">+ Buat latihan baru</button><button class="btn ghost sm" data-rec="1">Rekomendasi jadwal mingguan</button><button class="btn ghost sm" data-tpl="1">Pakai template siap pakai</button></section>`}
+return `<section class="card"><h2>Latihan lain</h2><p class="sub">Menu tambahan di luar jadwal mingguan.</p>${ks.length?ks.map(k=>`<div class="row custom-program-row"><span class="custom-program-info">${esc(PROG[k].n)}<small class="prev" style="display:block">${PROG[k].ex.length} gerakan${PROG[k].f?', '+esc(PROG[k].f):''}</small></span><span class="custom-program-actions"><button class="chip" data-xe="${k}">Ubah</button><button class="chip" data-start="${k}">Mulai</button></span></div>`).join(''):'<p class="empty">Belum ada menu tambahan.</p>'}<button class="btn ghost sm" data-xn="1">+ Buat latihan baru</button><button class="btn ghost sm" data-rec="1">Rekomendasi jadwal mingguan</button><button class="btn ghost sm" data-tpl="1">Pakai template siap pakai</button></section>`}
 function ringCard(d){const f=Math.max(1,+prof().freq||4),r=Math.min(1,d/f),C=238.76,rem=Math.max(0,f-d);
 return `<section class="card ringcard" aria-label="Target mingguan"><svg class="ring" viewBox="0 0 92 92" role="img" aria-label="${d} dari ${f} sesi"><defs><linearGradient id="rgr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs><circle class="t" cx="46" cy="46" r="38" fill="none" stroke-width="9"/><circle class="v" cx="46" cy="46" r="38" fill="none" stroke="url(#rgr)" stroke-width="9" stroke-linecap="round" transform="rotate(-90 46 46)" stroke-dasharray="${C}" stroke-dashoffset="${(C*(1-r)).toFixed(1)}" style="--c:${C}"/><text class="n" x="46" y="54" text-anchor="middle">${d}/${f}</text></svg><div><h2>Target mingguan</h2><p class="sub">${rem?'Tinggal '+rem+' sesi lagi minggu ini':'Target minggu ini tercapai'}</p></div></section>`}
 function heatCard(){const m={};sessions().forEach(s=>{m[s.date]=(m[s.date]||0)+(s.volume||1)});const mx=Math.max(1,...Object.values(m)),st=new Date(mondayIso()+'T00:00:00');st.setDate(st.getDate()-77);let c='',n=0;
@@ -60,33 +60,35 @@ function wtAutoComplete(i,j){
  const e=SX(a).ex[i],st=a.sets[i][j],unit=modeUnit(e),target=wtTargetSeconds(i,j);
  st.value=String(unit==='detik'?target:Math.round((target/60)*10)/10);
  st.done=true;
+ const pending=typeof apPendingWorkoutExercise==='function'?apPendingWorkoutExercise(a):-1;
+ const exerciseDone=a.sets[i].every(x=>x.done||x.w);
  let adv=false;
- if(st.done&&a.sets[i].every(x=>x.done)&&i<a.sets.length-1&&(a.cur||0)===i){
-   a.cur=i+1;adv=true;slideDir='r';
-   toast('Latihan selesai. Lanjut: '+SX(a).ex[i+1][0]);
+ if(exerciseDone&&pending>=0){
+   a.cur=pending;adv=true;slideDir=pending>i?'r':'l';
+   toast('Latihan selesai. Lanjut: '+SX(a).ex[pending][0]);
  }
  ls.set('ap_active',a);
  const nm=e[0],pj=a.pair?a.pair[i]:null;
  let sw=false;
  if(pj!=null&&!st.w&&a.sets[pj]){
    const dA=a.sets[i].filter(x=>x.done&&!x.w).length,dB=a.sets[pj].filter(x=>x.done&&!x.w).length,left=a.sets[pj].some(x=>!x.done&&!x.w);
-   sw=true;
-   if(dA>dB&&left){
-     a.cur=pj;slideDir=pj>i?'r':'l';ls.set('ap_active',a);stopRest();toast('Superset: lanjut ke '+SX(a).ex[pj][0]);
-   }else if(a.sets[i].every(x=>x.done)&&a.sets[pj].every(x=>x.done)&&(i===a.sets.length-1||pj===a.sets.length-1)){
-     stopRest();
-   }else{
-     restStart(Math.max(restFor(nm),restFor(SX(a).ex[pj][0])));
+   if(exerciseDone&&pending===pj&&dA>dB&&left){
+     sw=true;a.cur=pj;slideDir=pj>i?'r':'l';ls.set('ap_active',a);stopRest();toast('Superset: lanjut ke '+SX(a).ex[pj][0]);
+   }else if(exerciseDone&&a.sets[pj].every(x=>x.done||x.w)&&(i===a.sets.length-1||pj===a.sets.length-1)){
+     sw=true;stopRest();
    }
  }
  if(!sw){
-   if(i===a.sets.length-1&&a.sets[i].every(x=>x.done))stopRest();
+   if(typeof apIsWorkoutComplete==='function'&&apIsWorkoutComplete(a))stopRest();
    else restStart(restFor(nm));
  }
  ls.set('ap_active',a);
  WT=null;
  rr();
  if(adv){scrollTo(0,0);const n=$('slide');if(n)n.scrollTop=0}
+ if(typeof apIsWorkoutComplete==='function'&&apIsWorkoutComplete(a)){
+   setTimeout(()=>{const finish=document.querySelector('[data-finish]');if(finish)finish.click()},80);
+ }
 }
 function wtRefresh(){
  if(!WT)return;
@@ -353,6 +355,7 @@ function weekStrip(ss,mon){const N=['Sen','Sel','Rab','Kam','Jum','Sab','Min'],O
   return `<div class="wd ${PROG[dw]?'plan':''} ${dn?'done':''} ${id===todayIso?'now':''}"><i>${dn?'✓':d.getDate()}</i>${N[k]}</div>`}).join('')}</div>`}
 function undoToast(m,fn){toast(m);const t=$('toast');t.textContent=m+' ';const b=document.createElement('button');b.textContent='Urungkan';b.style.cssText='background:rgba(255,255,255,.25);border:0;color:#fff;border-radius:10px;padding:6px 12px;font:700 15px Barlow,sans-serif;margin-left:6px';b.onclick=()=>{fn();t.hidden=true};t.appendChild(b);clearTimeout(t._h);t._h=setTimeout(()=>{t.hidden=true},6000)}
 function toast(m){
+ if(document.body&&document.body.classList.contains('ap-onboarding-open'))return;
  let t=$('toast');
  if(!t){t=document.createElement('div');t.id='toast';t.className='toast';t.setAttribute('role','status');t.setAttribute('aria-live','polite');document.body.appendChild(t)}
  clearTimeout(t._h);clearTimeout(t._b);
@@ -430,11 +433,26 @@ const $=id=>document.getElementById(id);
 const saveProg=()=>ls.set('ap_prog',PROG);
 function restFor(n){return /Leg Press|Hack Squat|Romanian|Goblet/.test(n)?150:/Plank|Crunch|Pallof/.test(n)?50:/Chest Press|Lat Pulldown|Row|Shoulder Press/.test(n)?105:75}
 function beep(){try{if(!AC)return;if(AC.state==='suspended')AC.resume();const n=AC.currentTime,M=AC.createGain(),T=[];M.connect(AC.destination);window._al=M;setTimeout(()=>{if(window._al===M)window._al=null},5500);for(let k=0;k<5;k++)[0,.22,.44].forEach(x=>T.push(k*.95+x));T.forEach(t=>{const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=988;g.gain.setValueAtTime(0,n+t);g.gain.linearRampToValueAtTime(.55,n+t+.02);g.gain.exponentialRampToValueAtTime(.001,n+t+.17);o.connect(g);g.connect(M);o.start(n+t);o.stop(n+t+.18)})}catch(e){}}
-function stopRest(){R=null;$('rest').hidden=true;document.body.classList.remove('resting','rm')}
-function tick(){if(!R)return;const l=R.paused?R.left:R.end-Date.now();if(l<=0){beep();stopRest();return}const s=Math.ceil(l/1000),t=$('rt');if(t)t.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function stopRest(){R=null;$('rest').hidden=true;$('rest').classList.remove('rest-complete');document.body.classList.remove('resting','rm')}
+function restComplete(){
+ if(!R)return;
+ R=null;
+ try{beep()}catch(e){}
+ try{if('vibrate'in navigator)navigator.vibrate([250,120,250,120,500])}catch(e){}
+ try{if('Notification'in window&&Notification.permission==='granted')new Notification('Waktu istirahat selesai!',{body:'Saatnya melanjutkan latihan berikutnya.',tag:'athletic-physique-rest'})}catch(e){}
+ const el=$('rest');
+ if(el){
+  el.classList.add('rest-complete');
+  el.innerHTML=`<div class="rest-complete-content" role="alert" aria-live="assertive"><div class="rest-complete-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="m8 12.2 2.5 2.5L16.5 9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rest-complete-copy"><div class="rest-complete-title">Waktu istirahat selesai</div><p class="rest-complete-sub">Saatnya melanjutkan latihan atau set berikutnya.</p></div><button class="ok rest-complete-action" id="rnext" type="button">Lanjutkan latihan</button></div>`;
+  el.hidden=false;
+  const next=$('rnext');if(next)next.onclick=stopRest;
+ }
+ document.body.classList.remove('resting','rm');
+}
+function tick(){if(!R)return;const l=R.paused?R.left:R.end-Date.now();if(l<=0){restComplete();return}const s=Math.ceil(l/1000),t=$('rt');if(t)t.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
 function restStart(sec){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.resume)AC.resume()}catch(e){}
  R={end:Date.now()+sec*1000,left:0,paused:false};
- $('rest').innerHTML=`<div class="f" style="align-items:center;justify-content:space-between;margin:0"><div><div class="mute">Istirahat</div><div class="num" id="rt" style="font-size:44px;line-height:1">0:00</div></div><button class="ok" id="rskip" style="padding:0 18px">Lewati</button></div><div class="f"><button class="ok" id="rm" style="flex:1">−15</button><button class="ok" id="rp" style="flex:1">Jeda</button><button class="ok" id="rpl" style="flex:1">+15</button></div><div class="f"><input id="rman" inputmode="numeric" placeholder="Detik manual" aria-label="Durasi manual dalam detik"><button class="ok" id="rset" style="padding:0 18px">Atur</button></div>`;
+ $('rest').classList.remove('rest-complete');$('rest').innerHTML=`<div class="f" style="align-items:center;justify-content:space-between;margin:0"><div><div class="mute">Istirahat</div><div class="num" id="rt" style="font-size:44px;line-height:1">0:00</div></div><button class="ok" id="rskip" style="padding:0 18px">Lewati</button></div><div class="f"><button class="ok" id="rm" style="flex:1">−15</button><button class="ok" id="rp" style="flex:1">Jeda</button><button class="ok" id="rpl" style="flex:1">+15</button></div><div class="f"><input id="rman" inputmode="numeric" placeholder="Detik manual" aria-label="Durasi manual dalam detik"><button class="ok" id="rset" style="padding:0 18px">Atur</button></div>`;
  $('rest').hidden=false;$('rest').classList.remove('m');document.body.classList.remove('rm');document.body.classList.add('resting');$('rskip').onclick=stopRest;$('rt').onclick=()=>{$('rest').classList.toggle('m');document.body.classList.toggle('rm',$('rest').classList.contains('m'))};
  const adj=ms=>{if(!R)return;if(R.paused)R.left+=ms;else R.end+=ms;tick()};
  $('rm').onclick=()=>adj(-15000);$('rpl').onclick=()=>adj(15000);
@@ -453,7 +471,7 @@ function rec(e,i,pv,a){const m=exMode(e),rg=String(e[1]||'').match(/×\s*(\d+)�
  const unit=modeUnit(e),vals=pv.map(x=>parseFloat(String(x.value??x.time??'').replace(',','.'))||0);if(pv.length>=ns&&vals.every(x=>x>=mx)){const step=unit==='detik'?5:1;return recTxt(`Semua set mencapai ${mx} ${unit}. Jika terasa stabil, tambah sekitar ${step} ${unit} per set pada sesi berikutnya.`)}if(vals.some(x=>x<mn))return recTxt(`Ada set di bawah ${mn} ${unit}. Pertahankan durasi ini sampai target minimum tercapai dengan ritme yang stabil.`);if(pv.length<ns)return recTxt(`Lengkapi ${ns} set terlebih dahulu. Target ${mn}–${mx} ${unit} per set.`);const step=unit==='detik'?5:1;return recTxt(`Target sesi berikutnya: tambah sekitar ${step} ${unit} pada set yang sudah stabil.`)}
 function dayMus(d){const c={};d.ex.forEach(e=>{const x=exInfo(e[0]);if(x)x.p.forEach(g=>c[g]=(c[g]||0)+1)});return Object.keys(c).sort((a,b)=>c[b]-c[a]).slice(0,2).map(g=>MG[g]||g).join(' · ')}
 function dayChips(vk){return `<h2 style="margin-top:16px">Pilih latihan</h2><div class="dpick" role="list">${days().map(k=>{const d=PROG[k],m=dayMus(d);return `<button class="dp" role="listitem" ${k==vk?'aria-current="true"':''} data-vd="${k}"><span class="dpd">${HARI[k]}</span><b class="dpn">${esc(d.n)}</b><span class="dpc">${d.ex.length} gerakan</span><span class="dpm">${m?esc(m):'Otot belum terdata'}</span></button>`}).join('')}</div>`}
-function editList(d,vk){return d.ex.map((e,i)=>`<div class="erow"><input data-en="${vk}-${i}" value="${e[0]}" aria-label="Nama latihan"><input data-et="${vk}-${i}" value="${e[1]}" aria-label="Target"><button class="ok" data-del="${vk}-${i}">Hapus</button></div>`).join('')+`<button class="btn ghost sm" data-pickex="${vk}">Pilih dari daftar gerakan</button><label>Tambah latihan (ketik sendiri)</label><div class="erow"><input id="nn" placeholder="Nama latihan"><input id="nt" placeholder="3 × 10–12"><button class="ok" data-addex="${vk}">Tambah</button></div>`}
+function editList(d,vk){return d.ex.map((e,i)=>{const m=String(e[1]||'').match(/^(\d+)\s*×\s*(\d+)\s*[–-]\s*(\d+)$/),sets=m?+m[1]:3,lo=m?+m[2]:8,hi=m?+m[3]:12;return `<div class="erow"><input data-en="${vk}-${i}" value="${e[0]}" aria-label="Nama latihan"><div class="target-stepper" data-ts="${vk}-${i}"><div class="target-step"><button type="button" class="step-btn" data-step="set" data-dir="-1" aria-label="Kurangi set">−</button><span data-step-value="set">${sets} set</span><button type="button" class="step-btn" data-step="set" data-dir="1" aria-label="Tambah set">+</button></div><span class="target-mul">×</span><div class="target-step"><button type="button" class="step-btn" data-step="rep" data-dir="-1" aria-label="Kurangi repetisi">−</button><span data-step-value="rep">${lo}–${hi}</span><button type="button" class="step-btn" data-step="rep" data-dir="1" aria-label="Tambah repetisi">+</button></div><input type="hidden" data-et="${vk}-${i}" value="${sets} × ${lo}–${hi}"></div><button class="ok" data-del="${vk}-${i}">Hapus</button></div>`}).join('')+`<button class="btn ghost sm" data-pickex="${vk}">Pilih dari daftar gerakan</button><label>Tambah latihan (ketik sendiri)</label><div class="erow"><input id="nn" placeholder="Nama latihan"><input id="nt" placeholder="3 × 10–12"><button class="ok" data-addex="${vk}">Tambah</button></div>`}
 const IC={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',workout:'<path d="M3 9v6M6 6v12M18 6v12M21 9v6M6 12h12"/>',library:'<path d="M12 7v14M3 18V5a2 2 0 0 1 2-2h4a3 3 0 0 1 3 3 3 3 0 0 1 3-3h4a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-4a3 3 0 0 0-3 2 3 3 0 0 0-3-2H5a2 2 0 0 1-2-2z"/>',progress:'<path d="M3 20h18M5 16l4-5 4 3 6-8"/>',history:'<path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/>',profile:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>'};
 const NAMA={home:'Beranda',workout:'Workout',library:'Library',progress:'Progres',history:'Riwayat',profile:'Profil'};
 function libraryView(){
@@ -568,9 +586,32 @@ function render(){
  document.querySelectorAll('[data-start]').forEach(b=>b.onclick=()=>startWorkout(+b.dataset.start));
  document.querySelectorAll('[data-f]').forEach(inp=>inp.oninput=()=>{const a=getA();a.sets[+inp.dataset.i][+inp.dataset.j][inp.dataset.f]=inp.value;ls.set('ap_active',a)});
  document.querySelectorAll('[data-wtimer]').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,j=+b.dataset.j;if(WT&&WT.i===i&&WT.j===j){wtCommit();rr();return}wtStart(i,j);wtRefresh()});
- document.querySelectorAll('[data-done]').forEach(b=>b.onclick=()=>{const [i,j]=b.dataset.done.split('-').map(Number);const a=getA(),st=a.sets[i][j],e=SX(a).ex[i],m=exMode(e),raw=m==='time'?st.value:st.reps;if(!st.done&&!(parseFloat(String(raw).replace(',','.'))>0)){const f=document.querySelector(`[data-f="${m==='time'?'value':'reps'}"][data-i="${i}"][data-j="${j}"]`);if(f){f.classList.add('err');setTimeout(()=>f.classList.remove('err'),1500)}toast(m==='time'?'Isi durasi dulu.':'Isi jumlah repetisi dulu.');return}let adv=false;st.done=!st.done;if(st.done&&a.sets[i].every(x=>x.done)&&i<a.sets.length-1&&(a.cur||0)===i){a.cur=i+1;adv=true;slideDir='r';toast('Latihan selesai. Lanjut: '+SX(a).ex[i+1][0])}ls.set('ap_active',a);if(st.done){const nm=e[0],pj=a.pair?a.pair[i]:null;let sw=false;if(pj!=null&&!st.w&&a.sets[pj]){const dA=a.sets[i].filter(x=>x.done&&!x.w).length,dB=a.sets[pj].filter(x=>x.done&&!x.w).length,left=a.sets[pj].some(x=>!x.done&&!x.w);sw=true;if(dA>dB&&left){a.cur=pj;slideDir=pj>i?'r':'l';ls.set('ap_active',a);stopRest();toast('Superset: lanjut ke '+SX(a).ex[pj][0])}else if(a.sets[i].every(x=>x.done)&&a.sets[pj].every(x=>x.done)&&(i===a.sets.length-1||pj===a.sets.length-1))stopRest();else restStart(Math.max(restFor(nm),restFor(SX(a).ex[pj][0])))}if(!sw){if(i===a.sets.length-1&&a.sets[i].every(x=>x.done))stopRest();else restStart(restFor(nm))}if(m==='weight'){const kg=parseFloat(String(st.kg).replace(',','.'))||0,bs=bestKg(nm);if(bs>0&&kg>bs&&!st.w)toast('PR baru! '+nm+' '+kg+' kg')}}rr();if(adv){scrollTo(0,0);const n=$('slide');if(n)n.scrollTop=0}});
+ document.querySelectorAll('[data-done]').forEach(b=>b.onclick=()=>{const [i,j]=b.dataset.done.split('-').map(Number);const a=getA(),st=a.sets[i][j],e=SX(a).ex[i],m=exMode(e),raw=m==='time'?st.value:st.reps;if(!st.done&&!(parseFloat(String(raw).replace(',','.'))>0)){const f=document.querySelector(`[data-f="${m==='time'?'value':'reps'}"][data-i="${i}"][data-j="${j}"]`);if(f){f.classList.add('err');setTimeout(()=>f.classList.remove('err'),1500)}toast(m==='time'?'Isi durasi dulu.':'Isi jumlah repetisi dulu.');return}let adv=false;st.done=!st.done;
+if(st.done){
+ const exerciseDone=a.sets[i].every(x=>x.done||x.w);
+ const pending=typeof apPendingWorkoutExercise==='function'?apPendingWorkoutExercise(a):-1;
+ if(exerciseDone&&pending>=0){
+  a.cur=pending;adv=true;slideDir=pending>i?'r':'l';
+  toast('Latihan selesai. Lanjut: '+SX(a).ex[pending][0]);
+ }else if(exerciseDone){
+  a.cur=i;adv=true;
+ }
+}
+ls.set('ap_active',a);if(st.done){const nm=e[0],pj=a.pair?a.pair[i]:null;let sw=false;if(pj!=null&&!st.w&&a.sets[pj]){const dA=a.sets[i].filter(x=>x.done&&!x.w).length,dB=a.sets[pj].filter(x=>x.done&&!x.w).length,left=a.sets[pj].some(x=>!x.done&&!x.w);sw=true;if(dA>dB&&left){a.cur=pj;slideDir=pj>i?'r':'l';ls.set('ap_active',a);stopRest();toast('Superset: lanjut ke '+SX(a).ex[pj][0])}else if(a.sets[i].every(x=>x.done)&&a.sets[pj].every(x=>x.done)&&(i===a.sets.length-1||pj===a.sets.length-1))stopRest();else restStart(Math.max(restFor(nm),restFor(SX(a).ex[pj][0])))}if(!sw){if(i===a.sets.length-1&&a.sets[i].every(x=>x.done))stopRest();else restStart(restFor(nm))}if(m==='weight'){const kg=parseFloat(String(st.kg).replace(',','.'))||0,bs=bestKg(nm);if(bs>0&&kg>bs&&!st.w)toast('PR baru! '+nm+' '+kg+' kg')}}rr();if(adv){scrollTo(0,0);const n=$('slide');if(n)n.scrollTop=0}
+if(st.done&&typeof apIsWorkoutComplete==='function'&&apIsWorkoutComplete(a)){
+ setTimeout(()=>{const finish=document.querySelector('[data-finish]');if(finish)finish.click()},80);
+}});
  document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{const a=getA(),i=+b.dataset.add,l=a.sets[i],m=exMode(SX(a).ex[i]),last=l[l.length-1]||{};l.push({kg:m==='weight'?String(last.kg||''):'',reps:m!=='time'?String(last.reps||''):'',value:m==='time'?String(last.value??''):'',done:false});ls.set('ap_active',a);rr()});
- document.querySelectorAll('[data-finish]').forEach(b=>b.onclick=()=>{const a=getA(),p=SX(a),log={};let vol=0;p.ex.forEach((e,i)=>{const m=exMode(e),d=a.sets[i].filter(s=>s.done&&!s.w).map(s=>m==='time'?({mode:'time',value:parseFloat(String(s.value??'').replace(',','.'))||0,unit:modeUnit(e)}):m==='bodyweight'?({mode:'bodyweight',reps:parseInt(s.reps)||0}):({mode:'weight',kg:parseFloat(String(s.kg).replace(',','.'))||0,reps:parseInt(s.reps)||0,...(s.rpe?{rpe:+s.rpe}:{})}));if(d.length){log[e[0]]=d;if(m==='weight')d.forEach(x=>vol+=x.kg*x.reps)}});if(!Object.keys(log).length){toast('Tekan Catat pada minimal satu set dulu.');return}const s=sessions(),oldBest={};s.forEach(x=>Object.entries(x.log||{}).forEach(([n,v])=>v.forEach(r=>{oldBest[n]=Math.max(oldBest[n]||0,+r.kg||0)})));const newPr=[];Object.entries(log).forEach(([n,v])=>{const weighted=v.filter(x=>x.mode==='weight'||x.mode==null),m=weighted.length?Math.max(...weighted.map(x=>x.kg||0)):0;if(m>0&&m>(oldBest[n]||0))newPr.push(n+' '+kf(m)+' kg')});s.push({date:a.date,name:a.name,minutes:Math.max(1,Math.round((Date.now()-a.start)/60000)),volume:vol,log});(window.apTraining?window.apTraining.replaceAll(s):ls.set('ap_sessions',s));stopRest();ls.set('ap_active',null);tab='history';render();scrollTo(0,0);const counted=Object.values(log).reduce((n,v)=>n+v.length,0),detail=vol>0?' · volume '+Math.round(vol)+' kg':'';toast('Workout selesai: '+Object.keys(log).length+' latihan, '+counted+' set'+detail+(newPr.length?' · PR: '+newPr.slice(0,2).join(', ')+(newPr.length>2?' +'+(newPr.length-2):''):''))});
+ document.querySelectorAll('[data-finish]').forEach(b=>b.onclick=()=>{
+ const a=getA();if(!a)return;
+ if(typeof apValidateWorkoutCompletion==='function'){
+  const guard=apValidateWorkoutCompletion(a,{toast:true,render:true});
+  if(!guard.ok)return;
+ }else{
+  const pending=a.sets.findIndex(row=>row.some(x=>!x.done&&!x.w));
+  if(pending>=0){a.cur=pending;ls.set('ap_active',a);tab='workout';toast('Masih ada latihan yang belum selesai. Melanjutkan ke latihan yang tertunda.');render();scrollTo(0,0);return}
+ }
+ const p=SX(a),log={};let vol=0;p.ex.forEach((e,i)=>{const m=exMode(e),d=a.sets[i].filter(s=>s.done&&!s.w).map(s=>m==='time'?({mode:'time',value:parseFloat(String(s.value??'').replace(',','.'))||0,unit:modeUnit(e)}):m==='bodyweight'?({mode:'bodyweight',reps:parseInt(s.reps)||0}):({mode:'weight',kg:parseFloat(String(s.kg).replace(',','.'))||0,reps:parseInt(s.reps)||0,...(s.rpe?{rpe:+s.rpe}:{})}));if(d.length){log[e[0]]=d;if(m==='weight')d.forEach(x=>vol+=x.kg*x.reps)}});if(!Object.keys(log).length){toast('Tekan Catat pada minimal satu set dulu.');return}const s=sessions(),oldBest={};s.forEach(x=>Object.entries(x.log||{}).forEach(([n,v])=>v.forEach(r=>{oldBest[n]=Math.max(oldBest[n]||0,+r.kg||0)})));const newPr=[];Object.entries(log).forEach(([n,v])=>{const weighted=v.filter(x=>x.mode==='weight'||x.mode==null),m=weighted.length?Math.max(...weighted.map(x=>x.kg||0)):0;if(m>0&&m>(oldBest[n]||0))newPr.push(n+' '+kf(m)+' kg')});s.push({date:a.date,name:a.name,minutes:Math.max(1,Math.round((Date.now()-a.start)/60000)),volume:vol,log});(window.apTraining?window.apTraining.replaceAll(s):ls.set('ap_sessions',s));stopRest();ls.set('ap_active',null);tab='history';render();scrollTo(0,0);const counted=Object.values(log).reduce((n,v)=>n+v.length,0),detail=vol>0?' · volume '+Math.round(vol)+' kg':'';toast('Workout selesai: '+Object.keys(log).length+' latihan, '+counted+' set'+detail+(newPr.length?' · PR: '+newPr.slice(0,2).join(', ')+(newPr.length>2?' +'+(newPr.length-2):''):''))});
  document.querySelectorAll('[data-cancel]').forEach(b=>b.onclick=()=>{if(b.dataset.arm){stopRest();ls.set('ap_active',null);render()}else{b.dataset.arm='1';b.textContent='Tekan lagi untuk membatalkan';b.style.color='#ff8a8a';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.textContent='Batalkan workout';b.style.color=''}},3000)}});
  document.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{const a=getA(),i=+b.dataset.up,pv=prev(SX(a).ex[i][0]);if(pv){const nk=String(Math.max(...pv.map(x=>x.kg))+2.5);a.sets[i].forEach(s=>{if(!s.done)s.kg=nk})}a.up=a.up||{};a.up[i]=1;ls.set('ap_active',a);rr()});
  document.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>{const a=getA();a.up=a.up||{};a.up[+b.dataset.no]=1;ls.set('ap_active',a);rr()});
@@ -578,6 +619,7 @@ function render(){
  document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{editing=!editing;render()});
  document.querySelectorAll('[data-en]').forEach(inp=>inp.onchange=()=>{const [k,i]=inp.dataset.en.split('-');if(inp.value.trim()){PROG[k].ex[i][0]=inp.value.trim();PROG[k].ex[i][2]=exMode(PROG[k].ex[i])}saveProg()});
  document.querySelectorAll('[data-et]').forEach(inp=>inp.onchange=()=>{const [k,i]=inp.dataset.et.split('-');if(inp.value.trim()){PROG[k].ex[i][1]=inp.value.trim();PROG[k].ex[i][2]=exMode(PROG[k].ex[i])}saveProg()});
+ document.querySelectorAll('[data-ts]').forEach(w=>w.onclick=e=>{const b=e.target.closest('[data-step]');if(!b)return;const [k,i]=w.dataset.ts.split('-'),row=PROG[k]&&PROG[k].ex[+i];if(!row)return;const m=String(row[1]||'').match(/^(\d+)\s*×\s*(\d+)\s*[–-]\s*(\d+)$/);if(!m)return;let sets=+m[1],lo=+m[2],hi=+m[3];const dir=+b.dataset.dir;if(b.dataset.step==='set'){sets=Math.max(1,Math.min(99,sets+dir))}else{lo=Math.max(1,Math.min(99,lo+dir));hi=Math.max(lo,Math.min(99,hi+dir));}row[1]=`${sets} × ${lo}–${hi}`;row[2]=exMode(row);const et=w.querySelector('[data-et]');if(et)et.value=row[1];const sv=w.querySelector('[data-step-value="set"]'),rv=w.querySelector('[data-step-value="rep"]');if(sv)sv.textContent=`${sets} set`;if(rv)rv.textContent=`${lo}–${hi}`;saveProg()});
  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const [k,i]=b.dataset.del.split('-');arm(b,'Yakin?',()=>{PROG[k].ex.splice(+i,1);saveProg();render()})});
  document.querySelectorAll('[data-addex]').forEach(b=>b.onclick=()=>{const n=$('nn').value.trim();if(!n){toast('Isi nama gerakan dulu.');return}{const tg=$('nt').value.trim()||'3 × 10–12';PROG[b.dataset.addex].ex.push([n,tg,exMode([n,tg])]);}saveProg();render()});
  document.querySelectorAll('[data-rg]').forEach(b=>b.onclick=()=>{range=+b.dataset.rg;rr()});
