@@ -30,9 +30,13 @@
     try{return path.split('.').reduce((o,k)=>o&&o[k],window)!=null}catch(e){return false}
   }
   function fn(path){
+    // getA is intentionally a private top-level lexical function in 00-app-core.js,
+    // not a window property. Test it in its actual global lexical scope.
+    if(path==='getA'){try{return typeof getA==='function'}catch(e){return false}}
     try{return typeof path.split('.').reduce((o,k)=>o&&o[k],window)==='function'}catch(e){return false}
   }
-  function scripts(){return Array.from(document.scripts).map(s=>String(s.src||'').split('/').pop()).filter(Boolean)}
+  // Ignore cache-busting query strings and fragments when comparing script names.
+  function scripts(){return Array.from(document.scripts).map(s=>String(s.src||'').split(/[?#]/)[0].split('/').pop()).filter(Boolean)}
 
   function run(){
     const out=[];
@@ -91,7 +95,9 @@
       ready:out.every(x=>x.status==='pass'),
       note:'Diagnostic-only. This layer does not mutate canonical history or workout state.'
     };
-    window.apE2EIntelligenceQA=result;
+    // Keep the public API object (including run()) stable. Store the latest
+    // diagnostic result on it instead of replacing it with a plain result object.
+    Object.assign(window.apE2EIntelligenceQA, result);
     document.documentElement.dataset.apE2eQa=result.ready?'pass':'attention';
     return result;
   }

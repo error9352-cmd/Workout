@@ -80,11 +80,8 @@
 
   // Replace the old dashboard coach with the decision-driven version.
   if(typeof window.weeklyCoach==='function')window.weeklyCoach=function(){return card('coach')};
-  // Keep the existing Progress training analytics and prepend a decision-driven review.
-  if(typeof window.progressCards==='function'){
-    const oldProgressCards=window.progressCards;
-    window.progressCards=function(){return card('review')+oldProgressCards()};
-  }
+  // Progress Cards composition is owned by Stage 47 (unified integration).
+  // Do not prepend a second Weekly Review here: Stage 47 adds the canonical card.
   document.documentElement.dataset.weeklyCoach='v1';
   document.documentElement.dataset.weeklyCoachSource='weekly-adaptation-engine';
   window.dispatchEvent(new CustomEvent('ap:weekly-coach-ready',{detail:engine()}));

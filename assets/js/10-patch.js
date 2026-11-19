@@ -280,5 +280,23 @@ o.addEventListener('click',e=>{
 render();document.body.appendChild(o);document.addEventListener('keydown',kd)
 }
 
-if(!ls.get('ap_onb',false)&&!prof().height&&!Object.keys(PROG).length&&!getA())setTimeout(onbSheet,500);
+// Onboarding must not run while Supabase is still restoring the signed-in account.
+// Otherwise the welcome wizard can create a fresh program before the saved `ap_prog`
+// has arrived, and that new local program may then be pushed over the cloud copy.
+let apOnboardingOpened=false,apOnboardingTimer=null,apOnboardingWaiting=false;
+function tryScheduleOnboarding(){
+ if(apOnboardingOpened||apOnboardingTimer!==null)return;
+ if(window.__AP_CLOUD_AUTH_PENDING){
+  if(!apOnboardingWaiting){apOnboardingWaiting=true;window.addEventListener('ap:cloud-ready',()=>{apOnboardingWaiting=false;tryScheduleOnboarding()},{once:true});}
+  return;
+ }
+ apOnboardingTimer=setTimeout(()=>{
+  apOnboardingTimer=null;
+  if(window.__AP_CLOUD_AUTH_PENDING){tryScheduleOnboarding();return;}
+  if(!ls.get('ap_onb',false)&&!prof().height&&!Object.keys(PROG).length&&!getA()){
+   apOnboardingOpened=true;onbSheet();
+  }
+ },500);
+}
+tryScheduleOnboarding();
 })();

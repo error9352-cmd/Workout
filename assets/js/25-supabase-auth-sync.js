@@ -1,8 +1,10 @@
 /* Athletic Physique — extracted from original index.html script block 26 (line 3656) */
 (function(){
 if(!window.supabase)return;
-const U='https://tgbqtpmrkyfitvxchcwp.supabase.co',K='sb_publishable_C3nUA9n1BQKEImk145vXmg_VXVgpDDi';
-const sb=supabase.createClient(U,K,{auth:{persistSession:true,autoRefreshToken:true}});
+const cfg=window.AP_SUPABASE_CONFIG||{};
+const U=String(cfg.url||'').trim(),K=String(cfg.publishableKey||'').trim();
+if(!U||!K){console.error('[Athletic Physique] Konfigurasi Supabase belum lengkap.');return;}
+const sb=supabase.createClient(U,K,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const SKIP={ap_photos:1,ap_theme:1};
 let uid=null,t=null,busy=false,dirty=new Set();
 try{dirty=new Set(JSON.parse(localStorage.getItem('sbq')||'[]'))}catch(e){}

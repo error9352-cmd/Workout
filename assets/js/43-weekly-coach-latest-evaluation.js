@@ -35,15 +35,17 @@
     return `<div class="wc-latest-eval" aria-label="Evaluasi latihan terakhir"><div class="wc-latest-eval-head"><div><span class="wc-latest-eval-kicker">EVALUASI LATIHAN TERAKHIR · ${mode}</span><h3>${esc(ev.label||'Sesi dievaluasi')}</h3><p>${esc(ev.detail||'Performa latihan terakhir telah dianalisis berdasarkan data sesi.')}</p></div><span class="wc-latest-eval-badge ${esc(statusTone(ev.status))}">${esc(statusLabel(ev.status))}</span></div>${rows?`<div class="wc-latest-eval-list">${rows}</div>`:''}<div class="wc-latest-eval-next"><b>Latihan berikutnya</b><span>${esc(nextAction(ev.status))}</span></div></div>`;
   }
   function patch(){
-    if(!window.apWeeklyCoach||typeof window.apWeeklyCoach.card!=='function')return;
-    const original=window.apWeeklyCoach.card;
+    const api=window.apWeeklyCoach;
+    if(!api||typeof api.card!=='function'||api.card.__apLatestEvaluationPatch)return;
+    const original=api.card;
     const wrapped=function(mode){
       const html=original(mode);
       if(mode!=='coach'||html.includes('wc-latest-eval'))return html;
       return html.replace('</section>',renderLatest()+'</section>');
     };
-    window.apWeeklyCoach.card=wrapped;
-    window.apWeeklyCoach.render=()=>wrapped('coach');
+    wrapped.__apLatestEvaluationPatch=true;
+    api.card=wrapped;
+    api.render=()=>wrapped('coach');
     if(typeof window.weeklyCoach==='function')window.weeklyCoach=()=>wrapped('coach');
     document.documentElement.dataset.weeklyCoachLatestEvaluation='v1';
   }
