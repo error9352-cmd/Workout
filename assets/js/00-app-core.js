@@ -513,7 +513,7 @@ function view(){
   const hero=day?`<div class="day num">${day.n}</div><p class="sub">${day.f} · ${day.ex.length} latihan</p><button class="btn" data-start="${dow}">${active?'Lanjutkan Workout':'Mulai Workout'}</button><button class="btn ghost" data-go="workout">Pilih latihan lain</button>`
    :(!days().length?`<div class="day num">Belum ada jadwal</div><p class="sub">Atur jadwal mingguan sesuai level dan jumlah hari latihan Anda.</p><div class="dashboard-plan-actions"><button class="btn" data-rec="1">Buat jadwal sesuai profil</button><button class="btn ghost" data-tpl="1">Pakai template siap pakai</button></div>`:`<div class="day num">${dow===0?'Istirahat penuh':'Hari pemulihan'}</div><p class="sub">${dow===0?'Hari ini jadwal istirahat. Tubuh tumbuh saat pulih.':'Hari ini jadwal pemulihan. Jalan ringan atau peregangan sudah cukup.'}</p>`);
   const hist=ss.slice(-3).reverse().map(s=>`<div class="row"><span>${s.name}</span><span class="mute">${fmt(s.date)}</span></div>`).join('')||'<p class="empty">Belum ada latihan tercatat.</p>';
-  const coachHtml=weeklyCoach(ss,mon);
+  const coachHtml=window.AP_APP_CONFIG?.isEnabled('weekly_coach_enabled')===false?'':weeklyCoach(ss,mon);
   const coachCard=coachHtml?`<section class="card home-coach"><div class="home-coach-body">${coachHtml}</div></section>`:'';
   const activeCard=active?`<section class="card dashboard-active-card" aria-label="Workout aktif"><div class="dashboard-active-main"><p class="dashboard-active-label">WORKOUT AKTIF</p><h2>${esc(active.name)}</h2><p class="sub" style="margin:5px 0 0">${activeDone} dari ${activeTotal} set selesai</p><button class="btn" data-start="${active.dow}">Lanjutkan Workout</button></div><div class="dashboard-active-progress"><div class="dashboard-active-progress-head"><span class="dashboard-active-percent">${activePct}%</span></div><div class="dashboard-active-bar"><b style="width:${activePct}%"></b></div><div class="dashboard-active-meta"><span>Progress sesi</span><span>${activeDone}/${activeTotal}</span></div></div></section>`:'';
   return `<div class="dashboard-view homev">
@@ -685,4 +685,20 @@ if(st.done&&typeof apIsWorkoutComplete==='function'&&apIsWorkoutComplete(a)){
   weights=weights.filter(x=>x.d!==todayIso).concat({d:todayIso,kg:Math.round(v*10)/10});ls.set('ap_weights',weights);render()};
  const sh=document.getElementById('saveBmiHeight');
  if(sh)sh.onclick=()=>{const el=document.getElementById('bmiHeight'),v=parseFloat(String(el.value).replace(',','.'));if(!(v>=100&&v<=250)){toast('Masukkan tinggi badan 100–250 cm.');return}const p=prof();p.height=Math.round(v*10)/10;ls.set('ap_profile',p);render();toast('Tinggi badan tersimpan.')};}
+// Reconcile in-memory state after Supabase restores this account's localStorage keys.
+// `PROG` and `weights` are cached globals; without this hook the UI can keep showing
+// an empty/default program even though `ap_prog` has already been restored from cloud.
+window.apApplyHydratedStorage=function(keys){
+ const changed=new Set(Array.isArray(keys)?keys:[]);
+ if(changed.has('ap_prog')){
+  const restored=ls.get('ap_prog',null);
+  PROG=restored&&typeof restored==='object'?restored:{};
+ }
+ if(changed.has('ap_weights')){
+  const restored=ls.get('ap_weights',null);
+  weights=Array.isArray(restored)?restored:[];
+ }
+ if(changed.has('ap_theme'))document.documentElement.dataset.theme=ls.get('ap_theme','biru');
+ try{render()}catch(e){console.warn('[Athletic Physique] UI refresh after cloud hydration failed:',e)}
+};
 render();

@@ -32,5 +32,22 @@
     const all = read(); delete all[norm(name)];
     if (typeof ls !== 'undefined' && ls.set) ls.set(KEY, all);
   };
-  window.apExerciseCatalog = { key: KEY, normalize: norm, read, get, list, save, remove };
+  async function syncRemote(client){
+    try{
+      const sb=client||window.apSupabase;
+      if(!sb)return {ok:false,reason:'supabase-not-ready'};
+      const {data,error}=await sb.from('exercise_catalog').select('slug,name,category,primary,secondary,equipment,mode,instructions,image,image_status,active,updated_at').eq('active',true).order('name');
+      if(error)return {ok:false,error};
+      const all=read();
+      (data||[]).forEach(row=>{
+        const key=norm(row.name||row.slug); if(!key)return;
+        all[key]=Object.assign({},all[key]||{},row,{name:row.name||all[key]?.name||row.slug,imageStatus:row.image_status||all[key]?.imageStatus||'ready'});
+      });
+      if(typeof ls!=='undefined'&&ls.set)ls.set(KEY,all);
+      return {ok:true,count:(data||[]).length};
+    }catch(error){return {ok:false,error};}
+  }
+  window.apExerciseCatalog = { key: KEY, normalize: norm, read, get, list, save, remove, syncRemote };
+  window.addEventListener('ap:supabase-ready',e=>{syncRemote(e.detail||window.apSupabase).then(()=>{try{window.dispatchEvent(new CustomEvent('ap:exercise-catalog-synced'));}catch(_){}})});
+  if(window.apSupabase)syncRemote(window.apSupabase);
 })();
