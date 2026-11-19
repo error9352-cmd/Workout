@@ -116,7 +116,7 @@ athletic-physique-refactored/
         ├── 23-patch.js             # dimuat
         ├── 23-rpe-modal.js         # tidak dimuat
         ├── 24-patch.js             # dimuat; Supabase auth + sync
-        ├── 24-supabase-cdn.js      # tidak dimuat; berisi tag script CDN
+        ├── 24-supabase-cdn.js      # arsip no-op; CDN aktif dimuat dari index.html
         ├── 25-patch.js             # dimuat; recommendation modal scroll lock
         ├── 25-supabase-auth-sync.js# tidak dimuat; salinan/versi auth-sync
         ├── 26-patch.js             # dimuat; general modal scroll lock
@@ -332,7 +332,8 @@ Handler `[data-finish]` di `render()`:
 
 ```text
 Workout completion
-  └─ ap_sessions
+  └─ ap_sessions (compatibility API / derived projection)
+      └─ ap_training_model_v1 (canonical persisted source)
       ├─ PR / estimated 1RM
       ├─ volume / session statistics / muscle analysis
       ├─ weekly coach / weekly comparison / consistency
@@ -353,7 +354,7 @@ Catatan: berat badan dapat dimasukkan melalui form berat, dan pengukuran `kg` pa
 - `historyFiltered()` menyaring sesi menurut kata kunci dan rentang (7 hari, 30 hari, semua), lalu membalik urutan.
 - `historyStats()` menghitung jumlah sesi, set, volume, dan durasi dari daftar hasil.
 - `histItem()` membuat kartu detail sesi; menampilkan exercise, set, RPE, durasi, volume, catatan, serta aksi gambar/bagikan/edit/hapus.
-- `ap_sessions` adalah sumber riwayat utama.
+- `ap_training_model_v1` adalah sumber riwayat kanonis yang disimpan secara fisik. `ap_sessions` tetap menjadi compatibility API/projection melalui wrapper `assets/js/36-training-data-model.js`, sehingga History dan modul lama tetap dapat membaca format yang diharapkan.
 - `data-dels` menghapus satu sesi dengan undo toast; `data-delall` menghapus seluruh riwayat dengan undo.
 - Tombol gambar/bagikan/edit bergantung pada handler patch atau listener lain. File terpisah `17-photo-modal.js` dan `11-history-editor.js` ada tetapi tidak dimuat; verifikasi handler runtime di core sebelum mengubah aksi tersebut.
 
@@ -377,7 +378,7 @@ Auth berada di `assets/js/24-patch.js` (meskipun namanya `patch`). Script ini di
 - Login menggunakan `sb.auth.signInWithPassword({email,password})`.
 - Signup menggunakan `sb.auth.signUp({email,password})`; jika belum ada session, UI meminta konfirmasi email.
 - Session awal diperiksa melalui `sb.auth.getSession()`; `uid` dan `uemail` diambil dari `session.user.id` dan `.email`.
-- Logout melalui `sb.auth.signOut()` setelah mencoba `flush()`, kemudian `wipe()` data lokal `ap_*` yang termasuk sync scope, hapus `sbq`, lalu reload.
+- Logout hanya menjalankan `sb.auth.signOut()` setelah `flush()` berhasil dan antrean kosong. Jika push atau signOut gagal, data lokal dipertahankan dan logout tidak menyapu data.
 - `sbskip` menyimpan pilihan untuk melewati dialog akun pada perangkat tersebut.
 - UI login, signup, show/hide password, feedback error, login modal, dan logout confirmation dibuat secara dinamis oleh `24-patch.js`.
 
@@ -393,7 +394,8 @@ Auth berada di `assets/js/24-patch.js` (meskipun namanya `patch`). Script ini di
 |---|---|---|---|
 | `ap_prog` | object program per hari | Jadwal/program dan exercise | Workout, Home, Progress target |
 | `ap_active` | object sesi aktif | Workout yang sedang berjalan dan dapat dilanjutkan | Workout, Home, sync |
-| `ap_sessions` | array sesi selesai | Log set, tanggal, durasi, volume | History, Progress, PR, Weekly Coach, sync |
+| `ap_training_model_v1` | object `{version, sessions, updatedAt}` | Sumber sesi kanonis yang disimpan fisik; memuat exercise/set/metrics/program | `36-training-data-model.js`, cloud sync, Super Admin monitoring |
+| `ap_sessions` | array projection sesi selesai | Compatibility API hasil turunan dari model kanonis; bukan sumber fisik kedua | History, Progress, PR, Weekly Coach, backup compatibility |
 | `ap_weights` | array `{d, kg}` | Riwayat berat badan | Home, Progress, BMI, backup, sync |
 | `ap_profile` | object profil | Nama, tinggi, berat awal, frekuensi, goal | Home, Profile, BMI, rekomendasi program |
 | `ap_body` | array pengukuran bertanggal | Pengukuran kg/waist/chest/shoulder/arm/thigh | Progress/Physique |
@@ -409,7 +411,7 @@ Auth berada di `assets/js/24-patch.js` (meskipun namanya `patch`). Script ini di
 | `ap_prog_prev` | snapshot jadwal program sebelumnya + frekuensi | Mengembalikan program sebelum rekomendasi diterapkan | `10-patch.js` |
 | `ap_tplv` | string filter level template (default `Semua`) | Filter template workout | `10-patch.js` |
 | `ap_wr` | nilai dismissal untuk weekly review | Menyembunyikan insight/review tertentu untuk minggu yang ditandai | `15-patch.js` dan helper `weeklyReview()` |
-| `sbq` | array key lokal yang menunggu sync | Antrian dirty key | `24-patch.js` |
+| `sbq` | object `{uid, keys}` | Antrian dirty key yang terikat pada UID akun | `24-patch.js`; antrean legacy tanpa UID memerlukan konfirmasi pemilik akun sebelum dipush |
 | `sbskip` | string flag `'1'` | Jangan tampilkan login prompt otomatis setelah user skip | `24-patch.js` |
 
 Catatan sync: `24-patch.js` menyinkronkan key `ap_*` kecuali `ap_photos` dan `ap_theme`. `ap_photos` adalah fallback legacy untuk foto; foto utama saat IndexedDB tersedia disimpan di IndexedDB.
@@ -428,9 +430,9 @@ Catatan sync: `24-patch.js` menyinkronkan key `ap_*` kecuali `ap_photos` dan `ap
 
 | Table | Kolom yang dipakai | Tujuan |
 |---|---|---|
-| `user_data` | `user_id`, `key`, `value`, `updated_at` | Penyimpanan key/value per user; `upsert(rows)` untuk push, `select('key,value')` untuk pull |
+| `user_data` | `user_id`, `key`, `value`, `updated_at` | Penyimpanan key/value per user; `upsert(rows)` untuk push, pull dibatasi `.eq('user_id', uid)` |
 
-Tidak ditemukan schema SQL, migration, RLS policy, trigger, atau definisi tabel di arsip. Validasi skema, uniqueness constraint, dan RLS harus diperiksa pada dashboard/project Supabase sebelum perubahan backend.
+Arsip menyediakan `SUPER_ADMIN_SETUP.sql`, `SUPER_ADMIN_STAGE6_APP_CONFIG.sql`, dan `SUPABASE_CONFIGURATION_GUIDE.md`. Source code tidak dapat membuktikan apakah semua SQL tersebut sudah dijalankan pada project Supabase live; verifikasi status migration/RLS di dashboard sebelum mengubah backend.
 
 ### Backup
 
@@ -443,16 +445,16 @@ Tidak ditemukan schema SQL, migration, RLS policy, trigger, atau definisi tabel 
 ### Push / flush
 
 - `ls.set` di-wrap; jika user login dan key cocok `ap_*` serta bukan `ap_photos`/`ap_theme`, key dimasukkan ke `dirty` (`Set`).
-- Daftar dirty disimpan ke localStorage `sbq`.
-- `flush()` membentuk rows `{user_id,key,value,updated_at}` dan melakukan `sb.from('user_data').upsert(rows)`.
+- Daftar dirty disimpan ke localStorage `sbq` sebagai `{uid, keys}`. Format legacy array tanpa UID tidak diunggah otomatis karena pemilik queue tidak dapat dipastikan.
+- `flush()` membentuk rows `{user_id,key,value,updated_at}` dan melakukan `sb.from('user_data').upsert(rows)`. Antrean `sbq` disimpan bersama UID pemilik dan tidak boleh diputar ulang di bawah akun lain.
 - Perubahan dijadwalkan dengan debounce 2 detik; juga ada flush ketika browser online, tab menjadi hidden, saat login/session ditemukan, saat user menekan tombol sync, dan sebelum logout.
 
 ### Pull
 
-- `pull()` memanggil `sb.from('user_data').select('key,value')`.
+- `pull()` memanggil `sb.from('user_data').select('key,value').eq('user_id', uid)`. Filter UID eksplisit wajib dipertahankan meskipun RLS admin mengizinkan pembacaan lintas akun untuk dashboard monitoring.
 - Bila akun cloud belum punya data tetapi perangkat punya `ap_*`, user ditawari upload data lokal atau mulai dari kosong.
 - Bila data cloud tersedia, key yang tidak sedang dirty ditulis ke localStorage; bila ada perubahan, halaman reload.
-- `wipe()` menghapus key lokal berawalan `ap_` kecuali key yang masuk `SKIP` (`ap_photos`, `ap_theme`), menghapus `sbq`, dan mengosongkan dirty Set.
+- `wipe()` menghapus key lokal berawalan `ap_` kecuali key yang masuk `SKIP` (`ap_photos`, `ap_theme`), menghapus `sbq`, dan mengosongkan dirty Set. Logout menunggu flush sukses; jika antrean masih tertinggal atau signOut gagal, proses logout tidak menghapus data lokal.
 
 ### Offline dan tanpa akun
 
@@ -589,7 +591,7 @@ Jangan menghapus atau meratakan media query. Perubahan UI harus dites pada deskt
 | Progress charts | `lineChart()`, `barChart()`, `chart()`, `pgSummary()`, `progressCards()`, `muscleCard()`, `heatCard()` |
 | Profile/backup | `prof()`, `profileCard()`, `badgeCard()`, `badges()`, `themeCard()`, `backupCard()`, `bmiCard()` |
 | UI utility | `toast()`, `undoToast()`, `arm()`, `esc()`, `fmt()`, `offlineNote()` |
-| Auth/cloud | `flush()`, `pull()`, `go()`, `upd()` dalam IIFE `24-patch.js` |
+| Auth/cloud | `flush()`, `pull()`, `prepareSession()`, `go()`, `upd()` dalam IIFE `24-patch.js` |
 
 **Patch aktif yang penting (urutan script 01–23):**
 - `01-patch.js`: animasi/pop feedback setelah set ditandai selesai.
@@ -751,14 +753,69 @@ Exercise metadata image path -> `assets/images/exercises/` file -> `exImg()` -> 
 `ap_exercise_meta` -> `exMode()` / `exInfo()` / `tipHtml()` -> mode default / peta otot / instruksi teknik
 
 Workout program (ap_prog) -> Workout session (ap_active)
-Workout completion -> ap_sessions
-ap_sessions -> History / PR / 1RM / overload / weekly coach / volume / muscle / streak
+Workout completion -> ap_sessions compatibility API -> ap_training_model_v1 canonical persistence
+ap_training_model_v1 -> ap_sessions projection -> History / PR / 1RM / overload / weekly coach / volume / muscle / streak
 ap_weights + ap_profile.height -> BMI and weight trend
 ap_body -> body measurement progress
 IndexedDB ap_db/kv/photos -> progress photo gallery / comparison
 ap_profile -> Home greeting / program frequency / Profile
 ```
 
+
+## 21A. Login & Program Hydration Contract — wajib dipertahankan
+
+### Masalah yang dicegah
+Aplikasi merender core dan menjadwalkan onboarding sebelum pemulihan data Supabase selesai. Jika login atau pull cloud lambat, `PROG` dapat terlihat kosong pada memori meskipun `ap_prog` tersimpan di cloud. Welcome wizard berpotensi membuat program baru dan menimpa program lama.
+
+### Alur runtime yang benar
+
+```text
+00-app-core.js (local cache + initial render)
+        ↓
+24-patch.js (getSession / prepareSession / queue ownership)
+        ↓
+flush pending changes for the same UID
+        ↓
+pull user_data WHERE user_id = authenticated UID
+        ↓
+write restored keys to localStorage
+        ↓
+apApplyHydratedStorage(changedKeys)
+        ↓
+mark __AP_CLOUD_AUTH_PENDING = false
+        ↓
+dispatch ap:cloud-ready
+        ↓
+onboarding may evaluate the restored account state
+```
+
+### Source of truth and in-memory caches
+- `ap_prog` is the persisted source for weekly and custom workout programs. `PROG` in `00-app-core.js` is an in-memory cache and must be refreshed after cloud hydration.
+- `ap_weights` is persisted in localStorage and cached in the `weights` variable.
+- `ap_theme` updates `document.documentElement.dataset.theme` after hydration.
+- `window.apApplyHydratedStorage(keys)` is the current reconciliation hook. If a future module adds a global cache, add its key and in-memory refresh logic here.
+- Normal cloud pull must not depend on `location.reload()`. Hydrate memory and render instead.
+
+### Onboarding gate
+- `24-patch.js` sets `window.__AP_CLOUD_AUTH_PENDING=true` while session ownership and cloud hydration are unresolved.
+- It dispatches `ap:cloud-ready` only after successful hydration, or when the user explicitly continues without an account.
+- `10-patch.js` must wait for this event before deciding whether the welcome wizard is needed. Never treat an empty initial `PROG` as proof that the signed-in cloud account is new.
+- If the pull fails, do not launch onboarding and do not push a generated default program over cloud data. Keep the user informed and allow retry.
+
+### Local metadata and account isolation
+- Keys beginning `ap_sb_` are local auth/sync metadata, not user workout data. Do not upload them to `user_data` and do not delete them as part of ordinary user-data cache cleanup.
+- `sbq` dirty queue remains scoped to one authenticated UID. Do not transfer it to another account without explicit legacy recovery confirmation.
+- Switching accounts may clear the previous account's local application cache only after pending changes are resolved; it must not cross-upload or cross-display data.
+
+### Required regression tests
+1. Existing account with `ap_prog`: login and refresh show the saved program; welcome wizard does not appear.
+2. Delayed Supabase pull: no onboarding before `ap:cloud-ready`.
+3. Cloud pull updates `PROG` in memory and renders program without page reload.
+4. Empty cloud account: onboarding appears only after empty-account handling is complete.
+5. Account A and B retain independent `ap_prog` and queue ownership.
+6. Login/pull error never causes the welcome wizard to overwrite a saved cloud program.
+
+Runtime files: `assets/js/00-app-core.js`, `assets/js/10-patch.js`, `assets/js/24-patch.js`, `index.html`, and `sw.js`. Regression command: `node audit/program-hydration-regression.js`.
 
 ## 22. Intelligence Pipeline — Stage 16
 
@@ -845,6 +902,8 @@ Stage 16 deterministic audit tetap menjadi regression gate dan baseline saat Sta
 Static/runtime contract checks bukan pengganti browser interaction test. Pada lingkungan audit ini automated Chromium interaction terhadap halaman lokal tidak stabil, sehingga browser E2E tidak dinyatakan 100% lulus. Pengujian manual tetap diperlukan untuk alur Gym dan Home Gym dari mulai workout sampai sesi berikutnya.
 
 ### Perintah QA
+
+- Integrasi Supabase/Workout/Admin: `node audit/verify-integration.js` (harness Node untuk queue ownership, UID scoping, canonical/legacy workout data, dan runtime config).
 ```bash
 node tools/stage16-intelligence-audit.js
 node tools/stage17-e2e-intelligence-qa.js
@@ -862,7 +921,7 @@ Temuan berikut adalah fakta pemeriksaan arsip, bukan semuanya bug runtime yang s
 ### Refactor / maintenance risks (confirmed)
 - `00-app-core.js` sangat besar dan tetap menjadi runtime utama; fungsi yang sama disalin ke beberapa `features/*.js` dan `standalone-candidates.js`.
 - Sebagian besar kandidat feature/data/core belum dimuat oleh `index.html`; pengecualian aktif yang ditambahkan adalah `assets/js/data/exercise-catalog.js`. File kandidat lain tetap tidak memengaruhi runtime jika tidak direferensikan oleh HTML.
-- Ada file bernama `24-supabase-cdn.js` yang berisi tag `<script>` sebagai isi file, dan `25-supabase-auth-sync.js` yang menduplikasi auth/sync; keduanya tidak dimuat. Sumber aktif adalah CDN tag di HTML dan `24-patch.js`.
+- `24-supabase-cdn.js` dan `25-supabase-auth-sync.js` adalah file arsip yang tidak dimuat. File `24-supabase-cdn.js` berupa placeholder JavaScript no-op; sumber aktif SDK adalah CDN tag di HTML dan auth/sync aktif berada di `24-patch.js`.
 - `PROJECT_MAP.md` dan `Plain_text.md` kosong.
 - `TREE.txt` tidak mencerminkan semua file yang ada di arsip; gunakan `find`/tree aktual, bukan file itu sebagai satu-satunya acuan.
 
@@ -921,7 +980,7 @@ Temuan berikut adalah fakta pemeriksaan arsip, bukan semuanya bug runtime yang s
 
 ### Validasi pembaruan Library — 14 Nov 2026
 
-- `node --check` berhasil untuk seluruh file JavaScript aplikasi; `assets/js/24-supabase-cdn.js` dikecualikan karena file tersebut berisi tag `<script>` HTML, bukan JavaScript mandiri.
+- `node --check` harus dijalankan untuk seluruh file JavaScript, termasuk placeholder arsip `assets/js/24-supabase-cdn.js` yang kini merupakan JavaScript no-op valid.
 - Pemeriksaan browser otomatis dicoba, tetapi browser di lingkungan kerja memblokir akses ke halaman lokal (`ERR_BLOCKED_BY_ADMINISTRATOR`). Karena itu, interaksi visual akhir tetap perlu diuji di browser pengguna.
 
 ## Pembaruan katalog gerakan — 14 November 2026
@@ -994,7 +1053,7 @@ Canonical Training Data → Exercise Progression / Session Evaluation → Weekly
 ### Validasi Stage 6
 - Stage 16 Intelligence Audit: 12/12 lulus.
 - Stage 17 End-to-End Intelligence QA: 21/21 lulus.
-- Seluruh JavaScript aplikasi lolos `node --check` kecuali `assets/js/24-supabase-cdn.js`, yang merupakan wrapper HTML `<script>`.
+- Seluruh file JavaScript aplikasi, termasuk placeholder arsip `assets/js/24-supabase-cdn.js`, wajib lolos `node --check`.
 - Browser-level E2E tidak diklaim pada tahap ini.
 
 
@@ -1033,3 +1092,41 @@ Canonical Training Data → Exercise Progression / Session Evaluation → Weekly
 - First-time `Selamat datang` flow is now a multi-step onboarding wizard: intro → goal → level → weekly frequency → body data → program preview.
 - Added visible progress indicator, back/next navigation, selectable goal cards, level cards, frequency cards, live summary, and weekly program preview.
 - Existing program generation and `ap_onb` completion behavior remain the source of truth; the wizard only improves the first-time UX and stores the selected goal in `ap_profile`/`ap_recv`.
+
+
+## Supabase backend update — 17 November 2026
+
+This section supersedes older audit notes in this document that described the source archive before Supabase/Admin integration. The current packaged project includes `SUPER_ADMIN_SETUP.sql`, `SUPABASE_CONFIGURATION_GUIDE.md`, `assets/js/supabase-config.js`, and the active auth/admin scripts.
+
+- Supabase project configuration is centralized in `assets/js/supabase-config.js`; browser code must contain only the public publishable key.
+- Active runtime auth/cloud-sync code is `assets/js/24-patch.js`, loaded after the Supabase CDN and config. `assets/js/61-super-admin.js` provides the Super Admin dashboard.
+- `assets/js/25-supabase-auth-sync.js` and `assets/js/24-supabase-cdn.js` are not loaded by `index.html`; do not mistake them for active runtime files.
+- Database schema, profiles, `user_data`, `app_settings`, role RPC, grants, and RLS setup are documented in `SUPER_ADMIN_SETUP.sql` and `SUPABASE_CONFIGURATION_GUIDE.md`.
+- Public registration must create role `user`. Admin promotion must be controlled through the protected role-management process; never trust a role selected or supplied by the browser.
+- Current local development origin is `http://127.0.0.1:5502/`. Supabase Authentication Redirect URLs should include `http://127.0.0.1:5502/**` and, if used, `http://localhost:5502/**`. Google OAuth Authorized JavaScript origins use the origin without a trailing slash; Google Authorized redirect URI remains the Supabase callback URL documented in the Supabase guide.
+- Do not rerun the initial SQL setup for routine app updates. Add a separate, reviewed SQL migration only when a feature genuinely requires a database change.
+
+The older historical audit sections below remain useful for understanding the original refactor and prior source state, but current backend behavior must be checked against the files listed above.
+
+
+## 24. System Health Monitor — Admin UX update (19 Nov 2026)
+
+- Menghapus badge diagnostik Stage 17 dari tampilan pengguna umum. QA tetap berjalan sebagai diagnostik internal tanpa overlay atau notifikasi publik.
+- Menambahkan tab **System Health** pada Super Admin. Tab ini hanya dapat dibuka oleh akun yang lolos verifikasi role `admin` melalui `profiles`.
+- Tombol **Jalankan pemeriksaan** menguji koneksi baca `profiles` untuk sesi admin aktif dan menjalankan `window.apE2EIntelligenceQA.run()`; hasil PASS/ATTENTION ditampilkan per komponen.
+- Pemeriksaan bersifat read-only: tidak mengubah data workout, riwayat, pengaturan, tabel, atau kebijakan RLS. Tidak memerlukan SQL migration atau konfigurasi Supabase tambahan.
+- Hasil QA adalah pemeriksaan kontrak runtime di browser, bukan audit keamanan menyeluruh.
+
+
+## 25. Audit Integrasi Supabase, Workout & Feature Registry — 19 Nov 2026
+
+- Perbaikan `assets/js/24-patch.js`: pull cloud sekarang selalu memfilter `user_id` sesi aktif. Ini penting karena policy RLS memberi akun admin hak baca lintas pengguna untuk dashboard; hak monitoring tersebut tidak boleh membuat data pengguna lain masuk ke localStorage admin.
+- Antrean dirty sync `sbq` kini menyimpan UID pemilik. Antrean dari akun berbeda tidak boleh dipush sebagai akun yang sedang login. Queue format lama tanpa UID tidak otomatis dikirim karena pemiliknya tidak dapat dibuktikan.
+- `flush()` mengembalikan status sukses/gagal dan mempertahankan antrean jika push gagal. Logout diblokir selama antrean belum tersinkron; data lokal tidak dihapus jika `signOut` gagal.
+- Super Admin `assets/js/61-super-admin.js` kini membaca `ap_training_model_v1` sebagai sumber sesi kanonis (fallback `ap_sessions` per user), sehingga monitoring mengikuti model data yang digunakan `assets/js/36-training-data-model.js`. Ringkasan pengguna dan aktivitas menghitung set/volume dari struktur kanonis (`kg`, `reps`, `warmup`).
+- Feature flags yang benar-benar terhubung saat ini: `maintenance_mode`, `allow_registration`, `allow_google_login`, dan `weekly_coach_enabled`. `auto_resume_workout`, `smart_program_enabled`, `adaptive_workout_enabled`, dan `intelligence_enabled` ditandai belum terhubung dan toggle Super Admin dikunci agar tidak menyesatkan.
+- `FEATURE_INTEGRATION_REGISTRY.md` menjadi daftar kontrak fitur. Setiap update AI wajib memperbarui registry, Project Guide, dan kontrol Super Admin bersamaan; baca aturan wajib pada `AI_UPDATE_INSTRUCTIONS.md` bagian 7A.
+- Tidak ada perubahan SQL atau reset Supabase pada perbaikan frontend ini. RPC `ap_get_runtime_config` dan migrasi Stage 6 tetap prasyarat bagi runtime feature flags; jangan mengulang setup database.
+- Verifikasi lokal yang dilakukan: syntax check file JS yang diedit; pengujian browser/Supabase live belum dilakukan.
+
+- Cache PWA dinaikkan ke `ap-v60-sync-admin-integrity` agar browser mengambil file sinkronisasi dan Super Admin yang diperbarui.

@@ -55,3 +55,17 @@ terverifikasi.
 Exercise Library kini memiliki filter lokasi **Semua lokasi / Gym / Home Workout** dan filter peralatan **Semua alat / Tanpa alat / Resistance Band / Dumbbell**. Home Workout menambahkan 28 gerakan untuk dada, punggung, bahu, lengan, kaki, core, dan kardio. Gerakan yang relevan untuk kedua tempat ditandai **Gym + Home**. Katalog Gym, program, riwayat, dan data pengguna lama tetap dipertahankan.
 
 Beberapa variasi gerakan baru memakai ilustrasi referensi dari gerakan dasar yang paling dekat; kartu menandainya sebagai **Ilustrasi referensi** agar tidak disalahartikan sebagai foto langkah teknik yang persis sama.
+
+## Supabase configuration
+
+- Browser connection values are centralized in `assets/js/supabase-config.js`.
+- Run `SUPER_ADMIN_SETUP.sql` in the matching Supabase project's SQL Editor to create the full application schema, auth-profile triggers, RPC, grants, and RLS policies.
+- Follow `SUPABASE_CONFIGURATION_GUIDE.md` for Authentication URLs, email confirmation, Google OAuth setup, first-admin bootstrap, and end-to-end checks. Current local Live Server port: `5502` (adjust Supabase/Google allowlists if the port changes).
+- Never put a Supabase `service_role` / secret key in frontend code. The browser uses only the public publishable key.
+
+## Panduan wajib sebelum update AI
+
+- Baca `AI_UPDATE_INSTRUCTIONS.md` dan `PROJECT_GUIDE.md` sebelum mengubah source.
+- Baca `FEATURE_INTEGRATION_REGISTRY.md` sebelum menambah atau mengubah fitur.
+- Setiap fitur baru/perubahan harus memperbarui registry, Project Guide, dependency map, QA, dan status kontrol Super Admin dalam update yang sama. Toggle Super Admin harus dikunci jika runtime gate belum tersedia.
+- Jangan reset Supabase atau mengubah data/RLS yang sudah ada tanpa migrasi aman dan persetujuan.
