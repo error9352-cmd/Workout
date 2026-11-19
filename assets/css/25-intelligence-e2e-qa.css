@@ -1,9 +1,2 @@
-/* ATHLETIC PHYSIQUE — Stage 17 QA diagnostics */
-html[data-ap-e2e-qa="attention"] body::after{
-  content:'QA: periksa integrasi intelligence';
-  position:fixed;right:12px;bottom:12px;z-index:9999;
-  padding:7px 10px;border:1px solid var(--ap-border,#2a2f39);
-  border-radius:999px;background:var(--ap-surface-2,#171a20);
-  color:var(--ap-text,#f3f5f7);font:600 11px/1.2 system-ui,sans-serif;
-  pointer-events:none;opacity:.88;
-}
+/* Stage 17 QA remains available to administrators only; no end-user badge. */
+html[data-ap-e2e-qa="attention"] body::after{content:none!important;display:none!important}
